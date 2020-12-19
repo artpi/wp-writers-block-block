@@ -39,8 +39,8 @@ export default function Edit( { attributes, setAttributes } ) {
 	  }, [] );
 	function getContent() {
 		const content = allBlocksBefore.map( function( block ) {
-			return '<p>' + block.attributes.content + '</p>';
-		} ).join( "" );
+			return block.attributes.content;
+		} ).join( "\r\n" );
 
 		apiFetch( {
 			path: '/writers-block/prompt',
