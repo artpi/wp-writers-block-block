@@ -57,5 +57,23 @@ function create_block_writers_block_block_block_init() {
 		'editor_style'  => 'create-block-writers-block-block-block-editor',
 		'style'         => 'create-block-writers-block-block-block',
 	) );
+	add_action( 'rest_api_init', function () {
+		register_rest_route( 'writers-block', '/prompt', array(
+		  'methods' => 'POST',
+		  'callback' => 'writers_block_generate_prompt',
+		  'args' => array(
+			'content' => array( "required" => true ),
+			),
+		//   'permission_callback' => function () { // Only for admins for time being
+		// 	return current_user_can( 'edit_posts' );
+		//    }
+		) );
+	  } );
+
 }
 add_action( 'init', 'create_block_writers_block_block_block_init' );
+
+function writers_block_generate_prompt( WP_REST_Request $request ) {
+	$parameters = $request->get_params();
+	return $parameters['content'];
+}
