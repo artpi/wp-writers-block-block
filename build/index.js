@@ -238,8 +238,8 @@ function Edit(_ref) {
 
   function getContent() {
     var content = allBlocksBefore.map(function (block) {
-      return '<p>' + block.attributes.content + '</p>';
-    }).join("");
+      return block.attributes.content;
+    }).join("\r\n");
     _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_3___default()({
       path: '/writers-block/prompt',
       method: 'POST',
