@@ -64,9 +64,9 @@ function create_block_writers_block_block_block_init() {
 		  'args' => array(
 			'content' => array( "required" => true ),
 			),
-		//   'permission_callback' => function () { // Only for admins for time being
-		// 	return current_user_can( 'edit_posts' );
-		//    }
+		  'permission_callback' => function () { // Only for admins for time being
+			return current_user_can( 'edit_posts' );
+		   }
 		) );
 	  } );
 
