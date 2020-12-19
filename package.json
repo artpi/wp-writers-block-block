@@ -18,6 +18,7 @@
 		"@wordpress/env": "^3.0.0"
 	},
 	"dependencies": {
+		"@wordpress/api-fetch": "^3.21.0",
 		"@wordpress/data": "^4.26.0"
 	}
 }
