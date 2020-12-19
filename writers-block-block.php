@@ -75,5 +75,23 @@ add_action( 'init', 'create_block_writers_block_block_block_init' );
 
 function writers_block_generate_prompt( WP_REST_Request $request ) {
 	$parameters = $request->get_params();
-	return $parameters['content'];
+	$content = $parameters['content'];
+	$token = get_option( 'openai-token' );
+	$api_call = wp_remote_post(
+		'https://api.openai.com/v1/engines/davinci/completions',
+		array(
+			'headers' => array(
+				'Content-Type' => 'application/json',
+				'Authorization' => 'Bearer ' . $token,
+			),
+			'body'        => json_encode( [
+				'prompt' => $content,
+				'max_tokens' => 12,
+			] ),
+			'method'      => 'POST',
+			'data_format' => 'body',
+		)
+	);
+	$result = json_decode( $api_call['body'] );
+	return array( 'prompts' => $result->choices );
 }
