@@ -70,9 +70,19 @@ registerBlockType( 'create-block/writers-block-block', {
 	 */
 	supports: {
 		// Removes support for an HTML mode.
-		html: false,
+		html: true,
 	},
-
+	attributes: {
+		content: {
+			type: 'string',
+			source: 'text',
+			default: 'Loading your completion...'
+		},
+		requestedPrompt: {
+			type: 'boolean',
+			default: false,
+		},
+	},
 	/**
 	 * @see ./edit.js
 	 */

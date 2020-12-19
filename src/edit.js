@@ -5,6 +5,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useSelect, AsyncModeProvider } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * React hook that is used to mark the block wrapper element.
@@ -30,7 +31,7 @@ import './editor.scss';
  *
  * @return {WPElement} Element to render.
  */
-export default function Edit() {
+export default function Edit( { attributes, setAttributes } ) {
 	const allBlocksBefore = useSelect( ( select ) => {
 		const editor = select( 'core/block-editor' );
 		const index = editor.getBlockInsertionPoint().index -1;
@@ -38,21 +39,26 @@ export default function Edit() {
 	  }, [] );
 	function getContent() {
 		const content = allBlocksBefore.map( function( block ) {
-			return block.attributes.content;
-		} ).join( "\r\n\r\n" );
+			return '<p>' + block.attributes.content + '</p>';
+		} ).join( "" );
 
-		console.log( content );
+		apiFetch( {
+			path: '/writers-block/prompt',
+			method: 'POST',
+			data: { content: content },
+		} ).then( res => {
+			console.log( res );
+			setAttributes( { content: res.prompts[0].text } );
+		} );
 	}
 
-
+	if ( ! attributes.requestedPrompt ) {
+		setAttributes( { requestedPrompt: true } );
+		getContent();
+	}
 	return (
-		<p { ...useBlockProps() }>
-			<a onClick={ () => getContent() }>
-				{ __(
-					'CLICK HERE TO GENERATE PROMPT',
-					'writers-block-block'
-				) }
-			</a>
-		</p>
+		<div { ...useBlockProps() }>
+			{ attributes.content }
+		</div>
 	);
 }
