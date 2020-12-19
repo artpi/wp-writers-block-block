@@ -1,6 +1,6 @@
 === Writers Block Block ===
-Contributors:      The WordPress Contributors
-Tags:              block
+Contributors:      @artpi
+Tags:              block, openai, gpt-3, writing
 Requires at least: 5.6.0
 Tested up to:      5.6.0
 Stable tag:        0.1.0
@@ -8,54 +8,37 @@ Requires PHP:      7.0.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-Example block written with ESNext standard and JSX support – build step required.
+A block generating writing prompts using OpenAI's GPT-3
 
 == Description ==
 
-This is the long description. No limit, and you can use Markdown (as well as in the following sections).
-
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+Excited to use GPT-3 in your Gutenberg? Now you can!
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
+For development purposes, this installation covers setting up a development environment as well. **You will need the OpenAI token**.
 
-e.g.
-
-1. Upload the plugin files to the `/wp-content/plugins/writers-block-block` directory, or install the plugin through the WordPress plugins screen directly.
-1. Activate the plugin through the 'Plugins' screen in WordPress
+1. Make sure you have docker desktop installed
+1. You will need npm in version at least 6.
+1. Check out this repository
+1. `npm install`
+1. `npm start` will start WordPress development environment (using `wp-env`) and build appropriate scripts.
+1. As I said - you need the GPT-3 token. It's stored in WP-Options, in `openai-token`. Once you have set the above environment, you can set the token via: `./node_modules/.bin/wp-env run cli wp option set openai-token XXXXX`. This command will use wp-cli inside the docker container to set the token option.
+1. Now you can access WP-Admin using http://localhost:8888/wp-admin . Login admin, password password.
+1. Go to editor, write some content.
+1. Once you put the Writers Block BLock, the API request will generate a prompt for you.
 
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
-
-An answer to that question.
-
-= What about foo bar? =
-
-Answer to foo bar dilemma.
+Not yet.
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
 
 == Changelog ==
 
 = 0.1.0 =
 * Release
 
-== Arbitrary section ==
 
-You may provide arbitrary sections, in the same format as the ones above. This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation." Arbitrary sections will be shown below the built-in sections outlined above.
-
-# Setting your OpenAI token
-
-`wp-env run cli wp option set openai-token XXXXX`
