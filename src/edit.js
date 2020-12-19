@@ -4,6 +4,7 @@
  * @see https://developer.wordpress.org/block-editor/packages/packages-i18n/
  */
 import { __ } from '@wordpress/i18n';
+import { useSelect, AsyncModeProvider } from '@wordpress/data';
 
 /**
  * React hook that is used to mark the block wrapper element.
@@ -30,12 +31,28 @@ import './editor.scss';
  * @return {WPElement} Element to render.
  */
 export default function Edit() {
+	const allBlocksBefore = useSelect( ( select ) => {
+		const editor = select( 'core/block-editor' );
+		const index = editor.getBlockInsertionPoint().index -1;
+		return editor.getBlocks().slice( 0, index );
+	  }, [] );
+	function getContent() {
+		const content = allBlocksBefore.map( function( block ) {
+			return block.attributes.content;
+		} ).join( "\r\n\r\n" );
+
+		console.log( content );
+	}
+
+
 	return (
 		<p { ...useBlockProps() }>
-			{ __(
-				'Writers Block Block – hello from the editor!',
-				'writers-block-block'
-			) }
+			<a onClick={ () => getContent() }>
+				{ __(
+					'CLICK HERE TO GENERATE PROMPT',
+					'writers-block-block'
+				) }
+			</a>
 		</p>
 	);
 }
