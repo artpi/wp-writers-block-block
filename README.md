@@ -10,6 +10,7 @@ Writers Block Block uses [GPT-3](https://deliber.at/2020/gpt-3/) to generate the
 - It grabs the content of your post, calls OpenAI to generate a completion
 - Inserts that completion to your post
 - If you like it, you can transform that block into a Paragraph block. If you don't like it - you can delete it.
+- This plugin is automatically limiting the requests to one per 30s to protect your OpenAI quota. If you call the suggestion endpoint in succession, you will get the same answer.
 
 ## Getting started
 
