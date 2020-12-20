@@ -1,8 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useBlockProps } from '@wordpress/block-editor';
+import { Button, TextControl } from '@wordpress/components';
 import './editor.scss';
 
 /**
@@ -31,22 +32,36 @@ function formatPromptToOpenAI( editor ) {
  * @return {WPElement} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
+	const [ promptedForToken, setPromptedForToken ] = useState( false );
+	const [ tokenField, setTokenField ] = useState( '' );
+
 	const editor = useSelect( ( select ) => {
 		return select( 'core/block-editor' );
 	}, [] );
 
-	function getSuggestionFromOpenAI( setAttributes ) {
-		const content = formatPromptToOpenAI( editor );
+	function getSuggestionFromOpenAI( setAttributes, token ) {
+		const data = { content: formatPromptToOpenAI( editor ) };
+		if ( token ) {
+			data.token = token;
+			setPromptedForToken( false );
+		}
 		apiFetch( {
 			path: '/writers-block/prompt',
 			method: 'POST',
-			data: { content: content },
+			data: data,
 		} ).then( res => {
 			console.log( 'Open AI response', res );
 			setAttributes( { content: res.prompts[0].text } );
+		} ).catch( res => {
+			// We have not yet submitted a token.
+			if ( res.code === 'openai_token_missing' ) {
+				setPromptedForToken( true );
+			}
 		} );
 	}
-
+	function submitToken() {
+		getSuggestionFromOpenAI( setAttributes, tokenField );
+	}
 	//useEffect hook is called only once when block is first rendered.
 	useEffect( () => {
 		//Theoretically useEffect would ensure we only fire this once, but I don't want to fire it when we get data to edit either.
@@ -58,7 +73,15 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	return (
 		<div { ...useBlockProps() }>
-			{ attributes.content }
+			{ promptedForToken && ( <div>
+				<TextControl
+					label="Please provide the OpenAI token to continue:"
+					value={ tokenField }
+					onChange={ ( val ) => setTokenField( val ) }
+				/>
+				<Button isPrimary onClick={ () => submitToken() }>{ __( 'Submit' ) }</Button>
+			</div> ) }
+			{ ! promptedForToken && ( attributes.content ) }
 		</div>
 	);
 }

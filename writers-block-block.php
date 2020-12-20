@@ -12,6 +12,53 @@
  */
 
 /**
+ * This is an API endpoint to pass requests on to OpenAI
+ */
+function writers_block_call_openai( WP_REST_Request $request ) {
+	//We are saving responses as transients, so that we don't spam the API.
+	$parameters = $request->get_params();
+
+	if ( ! empty( $parameters['token'] ) ) {
+		$token = $parameters['token'];
+		update_option( 'openai-token', $token );
+	} else {
+		$token = get_option( 'openai-token' );
+	}
+
+	// We gotta stop if the token is not there.
+	if ( empty( $token ) || strlen( $token ) < 5 ) {
+		//TODO: I'm sure there is a way to pass 401 and not 500 here, but this way is not working.
+		return new WP_Error( 'openai_token_missing', __( 'Please provide a token' ), [ 'http_code' => 401 ] );
+	}
+
+	if ( get_transient( 'openai-response' ) ) {
+		$result = json_decode( get_transient( 'openai-response' ) );
+		return array( 'prompts' => $result->choices );
+	}
+	$content = strip_tags( $parameters['content'] );
+	
+	$api_call = wp_remote_post(
+		'https://api.openai.com/v1/engines/davinci/completions',
+		array(
+			'headers' => array(
+				'Content-Type' => 'application/json',
+				'Authorization' => 'Bearer ' . $token,
+			),
+			'body'        => json_encode( [
+				'prompt' => $content,
+				'max_tokens' => 64, // This is length of generated prompt. A token is about 4 chars.
+			] ),
+			'method'      => 'POST',
+			'data_format' => 'body',
+		)
+	);
+	// Only allow a new call every 30s - TODO: Maybe there should be some message in the editor that it's recycled message?
+	set_transient( 'openai-response', $api_call['body'], 30 );
+	$result = json_decode( $api_call['body'] );
+	return array( 'prompts' => $result->choices );
+}
+
+/**
  * Registers all block assets so that they can be enqueued through the block editor
  * in the corresponding context.
  *
@@ -59,46 +106,18 @@ function create_block_writers_block_block_block_init() {
 	) );
 	add_action( 'rest_api_init', function () {
 		register_rest_route( 'writers-block', '/prompt', array(
-		  'methods' => 'POST',
-		  'callback' => 'writers_block_generate_prompt',
-		  'args' => array(
-			'content' => array( "required" => true ),
+			'methods' => 'POST',
+			'callback' => 'writers_block_call_openai',
+			'args' => array(
+				'content' => array( "required" => true ),
+				'token' => array( "required" => false ),
 			),
-		  'permission_callback' => function () { // Only for admins for time being
-			return current_user_can( 'edit_posts' );
-		   }
+		  	'permission_callback' => function () { // Only for admins for time being
+				return current_user_can( 'edit_posts' );
+		   	}
 		) );
 	  } );
-
 }
+
 add_action( 'init', 'create_block_writers_block_block_block_init' );
 
-function writers_block_generate_prompt( WP_REST_Request $request ) {
-	//We are saving responses as transients, so that we don't spam the API
-	if ( get_transient( 'openai-response' ) ) {
-		$result = json_decode( get_transient( 'openai-response' ) );
-		return array( 'prompts' => $result->choices );
-	}
-	$parameters = $request->get_params();
-	$content = strip_tags( $parameters['content'] );
-	$token = get_option( 'openai-token' );
-	$api_call = wp_remote_post(
-		'https://api.openai.com/v1/engines/davinci/completions',
-		array(
-			'headers' => array(
-				'Content-Type' => 'application/json',
-				'Authorization' => 'Bearer ' . $token,
-			),
-			'body'        => json_encode( [
-				'prompt' => $content,
-				'max_tokens' => 64, // This is length of generated prompt. A token is about 4 chars.
-			] ),
-			'method'      => 'POST',
-			'data_format' => 'body',
-		)
-	);
-	// Only allow a new call every 30s
-	set_transient( 'openai-response', $api_call['body'], time() + 30 );
-	$result = json_decode( $api_call['body'] );
-	return array( 'prompts' => $result->choices );
-}
