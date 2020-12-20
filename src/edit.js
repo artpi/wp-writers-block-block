@@ -1,27 +1,26 @@
-/**
- * Retrieves the translation of text.
- *
- * @see https://developer.wordpress.org/block-editor/packages/packages-i18n/
- */
 import { __ } from '@wordpress/i18n';
-import { useSelect, AsyncModeProvider } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 import { useEffect } from 'react';
-/**
- * React hook that is used to mark the block wrapper element.
- * It provides all the necessary props like the class name.
- *
- * @see https://developer.wordpress.org/block-editor/packages/packages-block-editor/#useBlockProps
- */
 import { useBlockProps } from '@wordpress/block-editor';
+import './editor.scss';
 
 /**
- * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
- * Those files can contain any CSS code that gets applied to the editor.
- *
- * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
+ * This function formats the prompt to OpenAI.
+ * In this case, it gets all the blocks in the editor BEFORE the current blocks, extracts text and creates a continous prompt.
+ * But other modes are possible - for example get first sentence from every block and only prompt this way.
+ * @see https://beta.openai.com/docs/introduction/prompt-design-101
+ * @param {object} editor - reference to GB block editor instance. @see https://developer.wordpress.org/block-editor/data/data-core-editor/.
  */
-import './editor.scss';
+function formatPromptToOpenAI( editor ) {
+	const index = editor.getBlockInsertionPoint().index -1;
+	const allBlocksBefore = editor.getBlocks().slice( 0, index );
+	return allBlocksBefore.map( function( block ) {
+		return block.attributes.content;
+	} ).join( `
+
+` );
+}
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -32,32 +31,28 @@ import './editor.scss';
  * @return {WPElement} Element to render.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const allBlocksBefore = useSelect( ( select ) => {
-		const editor = select( 'core/block-editor' );
-		const index = editor.getBlockInsertionPoint().index -1;
-		return editor.getBlocks().slice( 0, index );
-	  }, [] );
+	const editor = useSelect( ( select ) => {
+		return select( 'core/block-editor' );
+	}, [] );
 
-	function getContent( setAttributes ) {
-		const content = allBlocksBefore.map( function( block ) {
-			return block.attributes.content;
-		} ).join( "\r\n" );
-
+	function getSuggestionFromOpenAI( setAttributes ) {
+		const content = formatPromptToOpenAI( editor );
 		apiFetch( {
 			path: '/writers-block/prompt',
 			method: 'POST',
 			data: { content: content },
 		} ).then( res => {
-			console.log( res );
+			console.log( 'Open AI response', res );
 			setAttributes( { content: res.prompts[0].text } );
 		} );
 	}
 
+	//useEffect hook is called only once when block is first rendered.
 	useEffect( () => {
 		//Theoretically useEffect would ensure we only fire this once, but I don't want to fire it when we get data to edit either.
 		setAttributes( { requestedPrompt: true } );
 		if ( ! attributes.requestedPrompt ) {
-			getContent( setAttributes );
+			getSuggestionFromOpenAI( setAttributes );
 		}
 	}, [] );
 

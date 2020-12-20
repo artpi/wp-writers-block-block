@@ -74,7 +74,7 @@ function create_block_writers_block_block_block_init() {
 add_action( 'init', 'create_block_writers_block_block_block_init' );
 
 function writers_block_generate_prompt( WP_REST_Request $request ) {
-	// We are saving responses as transients, so that we don't spam the API
+	//We are saving responses as transients, so that we don't spam the API
 	if ( get_transient( 'openai-response' ) ) {
 		$result = json_decode( get_transient( 'openai-response' ) );
 		return array( 'prompts' => $result->choices );
@@ -91,7 +91,7 @@ function writers_block_generate_prompt( WP_REST_Request $request ) {
 			),
 			'body'        => json_encode( [
 				'prompt' => $content,
-				'max_tokens' => 64,
+				'max_tokens' => 64, // This is length of generated prompt. A token is about 4 chars.
 			] ),
 			'method'      => 'POST',
 			'data_format' => 'body',
