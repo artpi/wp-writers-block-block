@@ -3,8 +3,8 @@
 	"name": "create-block/writers-block-block",
 	"title": "Writers Block Block",
 	"category": "widgets",
-	"icon": "smiley",
-	"description": "Example block written with ESNext standard and JSX support – build step required.",
+	"icon": "welcome-write-blog",
+	"description": "Generate new paragraph using your existing content and GPT-3.",
 	"textdomain": "writers-block-block",
 	"supports": {
 		"html": false
