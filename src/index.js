@@ -19,7 +19,7 @@ registerBlockType( 'create-block/writers-block-block', {
 		'writers-block-block'
 	),
 	category: 'widgets',
-	icon: 'dashicons-welcome-write-blog',
+	icon: 'welcome-write-blog',
 	supports: {
 		html: false,
 	},
