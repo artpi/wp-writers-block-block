@@ -8,7 +8,7 @@
 	border: 1px solid #3b2479;
 	padding: 0;
 }
-.wp-block-create-block-writers-block-block .disclaimer {
+.wp-block-create-block-writers-block-block .disclaimer, .wp-block-create-block-writers-block-block .components-base-control__label {
 	width: 100%;
 	background-color: #3b2479;
 	padding-top: 4px;
@@ -21,3 +21,13 @@
 .wp-block-create-block-writers-block-block .content {
 	padding: 4px;
 }
+
+.wp-block-create-block-writers-block-block .components-text-control__input {
+	margin: 10px;
+	width:80%;
+}
+
+.wp-block-create-block-writers-block-block .components-button.is-primary {
+	margin: 10px;
+}
+
