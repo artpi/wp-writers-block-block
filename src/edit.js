@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 import { useEffect, useState } from 'react';
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, RichText } from '@wordpress/block-editor';
 import { Button, TextControl } from '@wordpress/components';
 import './editor.scss';
 
@@ -17,7 +17,8 @@ function formatPromptToOpenAI( editor ) {
 	const index = editor.getBlockInsertionPoint().index -1;
 	const allBlocksBefore = editor.getBlocks().slice( 0, index );
 	return allBlocksBefore.map( function( block ) {
-		return block.attributes.content;
+		return block.attributes.content.replaceAll( '<br>' , `
+` );
 	} ).join( `
 
 ` );
@@ -70,7 +71,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			getSuggestionFromOpenAI( setAttributes );
 		}
 	}, [] );
-
+console.log( attributes.content );
 	return (
 		<div { ...useBlockProps() }>
 			{ promptedForToken && ( <div>
@@ -83,7 +84,9 @@ export default function Edit( { attributes, setAttributes } ) {
 			</div> ) }
 			{ ! promptedForToken && ( <div>
 				<div className="disclaimer">GPT-3 says:</div>
-				<div className="content">{ attributes.content }</div>
+				<div className='content'>
+					<RichText.Content tag={'div'} value={ attributes.content.trim().replaceAll( "\n", "<br/>" ) } />
+				</div>
 			</div> ) }
 		</div>
 	);

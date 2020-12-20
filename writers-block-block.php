@@ -52,8 +52,8 @@ function writers_block_call_openai( WP_REST_Request $request ) {
 			'data_format' => 'body',
 		)
 	);
-	// Only allow a new call every 30s - TODO: Maybe there should be some message in the editor that it's recycled message?
-	set_transient( 'openai-response', $api_call['body'], 30 );
+	// Only allow a new call every 60s - TODO: Maybe there should be some message in the editor that it's recycled message?
+	set_transient( 'openai-response', $api_call['body'], 60 );
 	$result = json_decode( $api_call['body'] );
 	return array( 'prompts' => $result->choices );
 }
