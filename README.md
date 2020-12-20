@@ -1,16 +1,19 @@
-# Writers Block Block
+# WordPress Writers Block Block
 
+This is a WordPress Gutenberg editor plugin that will put the power of OpenAI in your blog posts.
 Are you stuck with your writing? The next paragraph feels like drudgery and you don't know how to continue?
 Writers Block Block uses [GPT-3](https://deliber.at/2020/gpt-3/) to generate the next paragraph for you based on your current content of the post.
 
+Here it is writing poetry:
+![](https://user-images.githubusercontent.com/3775068/102711381-8c96ad00-42b9-11eb-97c8-ec0c2714e666.png)
 ## How does it work?
 
 - You write some content
-- Insert Writers Block Block block
+- Insert `Writers Block Block` block into your post
 - It grabs the content of your post, calls OpenAI to generate a completion
 - Inserts that completion to your post
 - If you like it, you can transform that block into a Paragraph block. If you don't like it - you can delete it.
-- This plugin is automatically limiting the requests to one per 30s to protect your OpenAI quota. If you call the suggestion endpoint in succession, you will get the same answer.
+- This plugin is automatically limiting the requests to one per 60s to protect your OpenAI quota. If you call the suggestion endpoint in succession, you will get the same answer.
 
 ## Getting started
 
