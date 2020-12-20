@@ -81,7 +81,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				/>
 				<Button isPrimary onClick={ () => submitToken() }>{ __( 'Submit' ) }</Button>
 			</div> ) }
-			{ ! promptedForToken && ( attributes.content ) }
+			{ ! promptedForToken && ( <div>
+				<div className="disclaimer">GPT-3 says:</div>
+				<div className="content">{ attributes.content }</div>
+			</div> ) }
 		</div>
 	);
 }
