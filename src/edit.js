@@ -6,6 +6,7 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect, AsyncModeProvider } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
+import { RichText } from '@wordpress/components';
 
 /**
  * React hook that is used to mark the block wrapper element.
@@ -37,6 +38,9 @@ export default function Edit( { attributes, setAttributes } ) {
 		const index = editor.getBlockInsertionPoint().index -1;
 		return editor.getBlocks().slice( 0, index );
 	  }, [] );
+	const updateFieldValue = ( val ) => {
+		setAttributes( { content: val } );
+	}
 	function getContent() {
 		const content = allBlocksBefore.map( function( block ) {
 			return block.attributes.content;

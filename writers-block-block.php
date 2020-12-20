@@ -74,6 +74,11 @@ function create_block_writers_block_block_block_init() {
 add_action( 'init', 'create_block_writers_block_block_block_init' );
 
 function writers_block_generate_prompt( WP_REST_Request $request ) {
+	// We are saving responses as transients, so that we don't spam the API
+	if ( get_transient( 'openai-response' ) ) {
+		$result = json_decode( get_transient( 'openai-response' ) );
+		return array( 'prompts' => $result->choices );
+	}
 	$parameters = $request->get_params();
 	$content = strip_tags( $parameters['content'] );
 	$token = get_option( 'openai-token' );
@@ -86,12 +91,14 @@ function writers_block_generate_prompt( WP_REST_Request $request ) {
 			),
 			'body'        => json_encode( [
 				'prompt' => $content,
-				// 'max_tokens' => 12,
+				'max_tokens' => 32,
 			] ),
 			'method'      => 'POST',
 			'data_format' => 'body',
 		)
 	);
+	// Only allow a new call every 30s
+	set_transient( 'openai-response', $api_call['body'], time() + 30 );
 	$result = json_decode( $api_call['body'] );
 	return array( 'prompts' => $result->choices );
 }

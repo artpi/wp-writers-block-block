@@ -3,7 +3,7 @@
  *
  * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
  */
-import { registerBlockType } from '@wordpress/blocks';
+import { registerBlockType, createBlock } from '@wordpress/blocks';
 
 /**
  * Retrieves the translation of text.
@@ -83,6 +83,17 @@ registerBlockType( 'create-block/writers-block-block', {
 			default: false,
 		},
 	},
+	transforms: {
+        to: [ {
+            type: 'block',
+            blocks: [ 'core/paragraph' ],
+            transform: ( { content } ) => {
+                return createBlock( 'core/paragraph', {
+                    content,
+                } );
+            },
+        } ],
+    },
 	/**
 	 * @see ./edit.js
 	 */
