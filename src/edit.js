@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from '@wordpress/element';
 import { useBlockProps, RichText } from '@wordpress/block-editor';
 import { Button, TextControl } from '@wordpress/components';
 import './editor.scss';
