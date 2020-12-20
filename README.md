@@ -13,15 +13,16 @@ Writers Block Block uses [GPT-3](https://deliber.at/2020/gpt-3/) to generate the
 
 ## Getting started
 
-For development purposes, this installation covers setting up a development environment as well. **You will need the OpenAI token** - apply [here](https://beta.openai.com/).
+For development purposes, this installation covers setting up a development environment as well. 
 
-1. Make sure you have docker desktop installed
-2. You will need npm in version at least 6.
-3. Check out this repository
-4. `npm install`
-5. `npm start` will start WordPress development environment (using `wp-env`) and build appropriate build scripts.
-6. Now you can access WP-Admin using http://localhost:8888/wp-admin . Login `admin`, password `password`.
-7. Go to editor, write some content.
-8. Use the block editor and search for `Writers Block Block` block. It will prompt for the OpenAI token first time you use it.
-9. Profit.
+1. **You will need the OpenAI token** - apply [here](https://beta.openai.com/).
+2. You will need npm. (Tested with v 6.14)
+3. You will need [Docker](https://www.docker.com/products/docker-desktop)
+4. Check out this repository
+5. `npm install`
+6. `npm start` will start WordPress development environment (using `wp-env`) and build appropriate build scripts.
+7. Now you can access WP-Admin using http://localhost:8888/wp-admin . Login `admin`, password `password`.
+8. Go to editor, write some content.
+9.  Use the block editor and search for `Writers Block Block` block. It will prompt for the OpenAI token first time you use it.
+10. Profit.
 
