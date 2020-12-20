@@ -91,7 +91,7 @@ function writers_block_generate_prompt( WP_REST_Request $request ) {
 			),
 			'body'        => json_encode( [
 				'prompt' => $content,
-				'max_tokens' => 32,
+				'max_tokens' => 64,
 			] ),
 			'method'      => 'POST',
 			'data_format' => 'body',

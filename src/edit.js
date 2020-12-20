@@ -6,8 +6,7 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect, AsyncModeProvider } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
-import { RichText } from '@wordpress/components';
-
+import { useEffect } from 'react';
 /**
  * React hook that is used to mark the block wrapper element.
  * It provides all the necessary props like the class name.
@@ -38,10 +37,8 @@ export default function Edit( { attributes, setAttributes } ) {
 		const index = editor.getBlockInsertionPoint().index -1;
 		return editor.getBlocks().slice( 0, index );
 	  }, [] );
-	const updateFieldValue = ( val ) => {
-		setAttributes( { content: val } );
-	}
-	function getContent() {
+
+	function getContent( setAttributes ) {
 		const content = allBlocksBefore.map( function( block ) {
 			return block.attributes.content;
 		} ).join( "\r\n" );
@@ -56,10 +53,14 @@ export default function Edit( { attributes, setAttributes } ) {
 		} );
 	}
 
-	if ( ! attributes.requestedPrompt ) {
+	useEffect( () => {
+		//Theoretically useEffect would ensure we only fire this once, but I don't want to fire it when we get data to edit either.
 		setAttributes( { requestedPrompt: true } );
-		getContent();
-	}
+		if ( ! attributes.requestedPrompt ) {
+			getContent( setAttributes );
+		}
+	}, [] );
+
 	return (
 		<div { ...useBlockProps() }>
 			{ attributes.content }
