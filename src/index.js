@@ -15,7 +15,7 @@ registerBlockType( 'create-block/writers-block-block', {
 	apiVersion: 2,
 	title: __( 'Writers Block Block', 'writers-block-block' ),
 	description: __(
-		'Generate new paragraph using your existing content and GPT-3',
+		'Automatically generate new paragraphs using your existing content, GPT-3 and robots.',
 		'writers-block-block'
 	),
 	category: 'widgets',
