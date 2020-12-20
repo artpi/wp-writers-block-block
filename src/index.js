@@ -11,14 +11,14 @@ import save from './save';
  *
  * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
  */
-registerBlockType( 'create-block/writers-block-block', {
+registerBlockType( 'writers-block-block/generate-suggestion', {
 	apiVersion: 2,
 	title: __( 'Writers Block Block', 'writers-block-block' ),
 	description: __(
 		'Automatically generate new paragraphs using your existing content, GPT-3 and robots.',
 		'writers-block-block'
 	),
-	category: 'widgets',
+	category: 'common',
 	icon: 'welcome-write-blog',
 	supports: {
 		html: false,
