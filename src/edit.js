@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useState } from '@wordpress/element';
-import { useBlockProps, RichText } from '@wordpress/block-editor';
+import { useEffect, useState, RawHTML } from '@wordpress/element';
+import { useBlockProps } from '@wordpress/block-editor';
 import { Button, TextControl } from '@wordpress/components';
 import './editor.scss';
 
@@ -24,6 +24,29 @@ function formatPromptToOpenAI( editor ) {
 ` );
 }
 
+function getSuggestionFromOpenAI( setAttributes, token, setPromptedForToken, formattedPrompt ) {
+	const data = { content: formattedPrompt };
+	if ( token ) {
+		data.token = token;
+		setPromptedForToken( false );
+	}
+	
+	apiFetch( {
+		path: '/writers-block/prompt',
+		method: 'POST',
+		data: data,
+	} ).then( res => {
+		console.log( 'Open AI response', res );
+		setAttributes( { content: res.prompts[0].text } );
+	} ).catch( res => {
+		// We have not yet submitted a token.
+		if ( res.code === 'openai_token_missing' ) {
+			setPromptedForToken( true );
+		}
+	} );
+	
+}
+
 /**
  * The edit function describes the structure of your block in the context of the
  * editor. This represents what the editor will render when the block is used.
@@ -36,32 +59,13 @@ export default function Edit( { attributes, setAttributes } ) {
 	const [ promptedForToken, setPromptedForToken ] = useState( false );
 	const [ tokenField, setTokenField ] = useState( '' );
 
-	const editor = useSelect( ( select ) => {
-		return select( 'core/block-editor' );
+	const formattedPrompt = useSelect( ( select ) => {
+		return formatPromptToOpenAI( select( 'core/block-editor' ) );
 	}, [] );
 
-	function getSuggestionFromOpenAI( setAttributes, token ) {
-		const data = { content: formatPromptToOpenAI( editor ) };
-		if ( token ) {
-			data.token = token;
-			setPromptedForToken( false );
-		}
-		apiFetch( {
-			path: '/writers-block/prompt',
-			method: 'POST',
-			data: data,
-		} ).then( res => {
-			console.log( 'Open AI response', res );
-			setAttributes( { content: res.prompts[0].text } );
-		} ).catch( res => {
-			// We have not yet submitted a token.
-			if ( res.code === 'openai_token_missing' ) {
-				setPromptedForToken( true );
-			}
-		} );
-	}
+
 	function submitToken() {
-		getSuggestionFromOpenAI( setAttributes, tokenField );
+		getSuggestionFromOpenAI( setAttributes, token, setPromptedForToken, formattedPrompt );
 	}
 	//useEffect hook is called only once when block is first rendered.
 	useEffect( () => {
@@ -71,7 +75,7 @@ export default function Edit( { attributes, setAttributes } ) {
 			getSuggestionFromOpenAI( setAttributes );
 		}
 	}, [] );
-console.log( attributes.content );
+
 	return (
 		<div { ...useBlockProps() }>
 			{ promptedForToken && ( <div>
@@ -85,7 +89,7 @@ console.log( attributes.content );
 			{ ! promptedForToken && ( <div>
 				<div className="disclaimer">GPT-3 says:</div>
 				<div className='content'>
-					<RichText.Content tag={'div'} value={ attributes.content.trim().replaceAll( "\n", "<br/>" ) } />
+					<RawHTML>{ attributes.content.trim().replaceAll( "\n", "<br/>" ) }</RawHTML>
 				</div>
 			</div> ) }
 		</div>
