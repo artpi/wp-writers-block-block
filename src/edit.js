@@ -1,10 +1,24 @@
 import { __ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
-import apiFetch from '@wordpress/api-fetch';
-import { useEffect, useState, RawHTML } from '@wordpress/element';
-import { useBlockProps } from '@wordpress/block-editor';
-import { Button, TextControl } from '@wordpress/components';
 import './editor.scss';
+
+const {
+	useState,
+	RawHTML,
+	useEffect,
+} = wp.element;
+
+const {
+	apiFetch
+} = wp;
+
+const {
+	Button,
+	TextControl
+} = wp.components;
+
+const {
+	useSelect
+} = wp.data;
 
 /**
  * This function formats the prompt to OpenAI.
@@ -17,11 +31,8 @@ function formatPromptToOpenAI( editor ) {
 	const index = editor.getBlockInsertionPoint().index -1;
 	const allBlocksBefore = editor.getBlocks().slice( 0, index );
 	return allBlocksBefore.map( function( block ) {
-		return block.attributes.content.replaceAll( '<br>' , `
-` );
-	} ).join( `
-
-` );
+		return block.attributes.content.replaceAll( '<br>' ,"\n\n" );
+	} ).join( "\n\n" );
 }
 
 function getSuggestionFromOpenAI( setAttributes, token, setPromptedForToken, formattedPrompt ) {
@@ -72,12 +83,12 @@ export default function Edit( { attributes, setAttributes } ) {
 		//Theoretically useEffect would ensure we only fire this once, but I don't want to fire it when we get data to edit either.
 		setAttributes( { requestedPrompt: true } );
 		if ( ! attributes.requestedPrompt ) {
-			getSuggestionFromOpenAI( setAttributes );
+			getSuggestionFromOpenAI( setAttributes, false, setPromptedForToken, formattedPrompt );
 		}
 	}, [] );
 
 	return (
-		<div { ...useBlockProps() }>
+		<div>
 			{ promptedForToken && ( <div>
 				<TextControl
 					label="Please provide the OpenAI token to continue:"
