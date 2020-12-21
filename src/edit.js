@@ -1,10 +1,27 @@
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
-import { useState, RawHTML, useEffect } from '@wordpress/element';
-import apiFetch from '@wordpress/api-fetch';
-import { Button, TextControl } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+
+const {
+	useState,
+	RawHTML,
+	useEffect,
+} = wp.element;
+
+const {
+	apiFetch
+} = wp;
+
+const {
+	Button,
+	TextControl
+} = wp.components;
+
+const {
+	useSelect
+} = wp.data;
+
+
 
 
 /**
