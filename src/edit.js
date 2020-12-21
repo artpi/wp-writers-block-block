@@ -1,24 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
-const {
-	useState,
-	RawHTML,
-	useEffect,
-} = wp.element;
+import { useState, RawHTML, useEffect } from '@wordpress/element';
+import apiFetch from '@wordpress/api-fetch';
+import { Button, TextControl } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 
-const {
-	apiFetch
-} = wp;
-
-const {
-	Button,
-	TextControl
-} = wp.components;
-
-const {
-	useSelect
-} = wp.data;
 
 /**
  * This function formats the prompt to OpenAI.
