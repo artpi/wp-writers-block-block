@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
-import { useBlockProps } from '@wordpress/block-editor';
 
 const {
 	useState,
@@ -11,6 +10,10 @@ const {
 const {
 	apiFetch
 } = wp;
+
+const {
+	useBlockProps
+} = wp.blockEditor;
 
 const {
 	Button,
