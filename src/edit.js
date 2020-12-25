@@ -1,4 +1,3 @@
-import { __ } from '@wordpress/i18n';
 import './editor.scss';
 
 const {
@@ -23,7 +22,6 @@ const {
 const {
 	useSelect
 } = wp.data;
-
 
 
 
@@ -102,7 +100,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					value={ tokenField }
 					onChange={ ( val ) => setTokenField( val ) }
 				/>
-				<Button isPrimary onClick={ () => submitToken() }>{ __( 'Submit' ) }</Button>
+				<Button isPrimary onClick={ () => submitToken() }>{ 'Submit' }</Button>
 			</div> ) }
 			{ ! promptedForToken && ( <div>
 				<div className="disclaimer">GPT-3 says:</div>
