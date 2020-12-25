@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
-
+import { useBlockProps } from '@wordpress/block-editor';
 
 const {
 	useState,
@@ -92,7 +92,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	}, [] );
 
 	return (
-		<div>
+		<div { ...useBlockProps() }>
 			{ promptedForToken && ( <div>
 				<TextControl
 					label="Please provide the OpenAI token to continue:"
