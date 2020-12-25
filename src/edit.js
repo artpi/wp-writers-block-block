@@ -35,7 +35,9 @@ const {
 function formatPromptToOpenAI( editor ) {
 	const index = editor.getBlockInsertionPoint().index -1;
 	const allBlocksBefore = editor.getBlocks().slice( 0, index );
-	return allBlocksBefore.map( function( block ) {
+	return allBlocksBefore.filter( function ( block ) {
+		return ( block && block.attributes && block.attributes.content );
+	} ).map( function( block ) {
 		return block.attributes.content.replaceAll( '<br>' ,"\n\n" );
 	} ).join( "\n\n" );
 }
