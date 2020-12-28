@@ -340,8 +340,9 @@ __webpack_require__.r(__webpack_exports__);
  * This function formats the prompt to OpenAI.
  * In this case, it gets all the blocks in the editor BEFORE the current blocks, extracts text and creates a continous prompt.
  * But other modes are possible - for example get first sentence from every block and only prompt this way.
+ *
  * @see https://beta.openai.com/docs/introduction/prompt-design-101
- * @param {object} editor - reference to GB block editor instance. @see https://developer.wordpress.org/block-editor/data/data-core-editor/.
+ * @param {Object} editor - reference to GB block editor instance. @see https://developer.wordpress.org/block-editor/data/data-core-editor/.
  */
 
 function formatPromptToOpenAI(editor) {
@@ -350,8 +351,8 @@ function formatPromptToOpenAI(editor) {
   return allBlocksBefore.filter(function (block) {
     return block && block.attributes && block.attributes.content;
   }).map(function (block) {
-    return block.attributes.content.replaceAll('<br>', "\n\n");
-  }).join("\n\n");
+    return block.attributes.content.replaceAll('<br>', '\n\n');
+  }).join('\n\n');
 }
 
 function getSuggestionFromOpenAI(setAttributes, token, setPromptedForToken, formattedPrompt) {
@@ -369,7 +370,6 @@ function getSuggestionFromOpenAI(setAttributes, token, setPromptedForToken, form
     method: 'POST',
     data: data
   }).then(function (res) {
-    console.log('Open AI response', res);
     setAttributes({
       content: res.prompts[0].text
     });
@@ -409,7 +409,7 @@ function Edit(_ref) {
   }, []);
 
   function submitToken() {
-    getSuggestionFromOpenAI(setAttributes, token, setPromptedForToken, formattedPrompt);
+    getSuggestionFromOpenAI(setAttributes, tokenField, setPromptedForToken, formattedPrompt);
   } //useEffect hook is called only once when block is first rendered.
 
 
@@ -438,7 +438,7 @@ function Edit(_ref) {
     className: "disclaimer"
   }, "GPT-3 says:"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     className: "content"
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["RawHTML"], null, attributes.content.trim().replaceAll("\n", "<br/>")))));
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["RawHTML"], null, attributes.content.trim().replaceAll('\n', '<br/>')))));
 }
 
 /***/ }),
@@ -495,7 +495,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__["registerBlockType"])('wri
     content: {
       type: 'string',
       source: 'text',
-      default: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__["__"])('Please wait, consulting robots about your content....🤖', 'writers-block-block')
+      default: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__["__"])('Please wait, consulting robots about your content… 🤖', 'writers-block-block')
     },
     requestedPrompt: {
       type: 'boolean',
@@ -542,10 +542,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return save; });
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
 
 
 /**
@@ -553,7 +551,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @see https://developer.wordpress.org/block-editor/packages/packages-i18n/
  */
-
 
 /**
  * The save function defines the way in which the different attributes should
@@ -567,7 +564,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function save(_ref) {
   var attributes = _ref.attributes;
-  var blockProps = _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["useBlockProps"].save();
+  var blockProps = _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__["useBlockProps"].save();
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", blockProps, attributes.content);
 }
 

@@ -1,7 +1,6 @@
 import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
-
 import './style.scss';
 import Edit from './edit';
 import save from './save';
@@ -27,7 +26,10 @@ registerBlockType( 'writers-block-block/generate-suggestion', {
 		content: {
 			type: 'string',
 			source: 'text',
-			default: __( 'Please wait, consulting robots about your content....🤖', 'writers-block-block' )
+			default: __(
+				'Please wait, consulting robots about your content… 🤖',
+				'writers-block-block'
+			),
 		},
 		requestedPrompt: {
 			type: 'boolean',
@@ -37,16 +39,18 @@ registerBlockType( 'writers-block-block/generate-suggestion', {
 	// We are allowing transform to a paragraph to use the generated content.
 	// Maybe we should provide a button inside the block that triggers the transform?
 	transforms: {
-        to: [ {
-            type: 'block',
-            blocks: [ 'core/paragraph' ],
-            transform: ( { content } ) => {
-                return createBlock( 'core/paragraph', {
-                    content,
-                } );
-            },
-        } ],
-    },
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'core/paragraph' ],
+				transform: ( { content } ) => {
+					return createBlock( 'core/paragraph', {
+						content,
+					} );
+				},
+			},
+		],
+	},
 	/**
 	 * @see ./edit.js
 	 */

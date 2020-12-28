@@ -10,40 +10,49 @@ import { useSelect } from '@wordpress/data';
  * This function formats the prompt to OpenAI.
  * In this case, it gets all the blocks in the editor BEFORE the current blocks, extracts text and creates a continous prompt.
  * But other modes are possible - for example get first sentence from every block and only prompt this way.
+ *
  * @see https://beta.openai.com/docs/introduction/prompt-design-101
- * @param {object} editor - reference to GB block editor instance. @see https://developer.wordpress.org/block-editor/data/data-core-editor/.
+ * @param {Object} editor - reference to GB block editor instance. @see https://developer.wordpress.org/block-editor/data/data-core-editor/.
  */
 function formatPromptToOpenAI( editor ) {
-	const index = editor.getBlockInsertionPoint().index -1;
+	const index = editor.getBlockInsertionPoint().index - 1;
 	const allBlocksBefore = editor.getBlocks().slice( 0, index );
-	return allBlocksBefore.filter( function ( block ) {
-		return ( block && block.attributes && block.attributes.content );
-	} ).map( function( block ) {
-		return block.attributes.content.replaceAll( '<br>' ,"\n\n" );
-	} ).join( "\n\n" );
+	return allBlocksBefore
+		.filter( function ( block ) {
+			return block && block.attributes && block.attributes.content;
+		} )
+		.map( function ( block ) {
+			return block.attributes.content.replaceAll( '<br>', '\n\n' );
+		} )
+		.join( '\n\n' );
 }
 
-function getSuggestionFromOpenAI( setAttributes, token, setPromptedForToken, formattedPrompt ) {
+function getSuggestionFromOpenAI(
+	setAttributes,
+	token,
+	setPromptedForToken,
+	formattedPrompt
+) {
 	const data = { content: formattedPrompt };
 	if ( token ) {
 		data.token = token;
 		setPromptedForToken( false );
 	}
-	
+
 	apiFetch( {
 		path: '/writers-block/prompt',
 		method: 'POST',
 		data: data,
-	} ).then( res => {
-		console.log( 'Open AI response', res );
-		setAttributes( { content: res.prompts[0].text } );
-	} ).catch( res => {
-		// We have not yet submitted a token.
-		if ( res.code === 'openai_token_missing' ) {
-			setPromptedForToken( true );
-		}
-	} );
-	
+	} )
+		.then( ( res ) => {
+			setAttributes( { content: res.prompts[ 0 ].text } );
+		} )
+		.catch( ( res ) => {
+			// We have not yet submitted a token.
+			if ( res.code === 'openai_token_missing' ) {
+				setPromptedForToken( true );
+			}
+		} );
 }
 
 /**
@@ -62,35 +71,54 @@ export default function Edit( { attributes, setAttributes } ) {
 		return formatPromptToOpenAI( select( 'core/block-editor' ) );
 	}, [] );
 
-
 	function submitToken() {
-		getSuggestionFromOpenAI( setAttributes, token, setPromptedForToken, formattedPrompt );
+		getSuggestionFromOpenAI(
+			setAttributes,
+			tokenField,
+			setPromptedForToken,
+			formattedPrompt
+		);
 	}
 	//useEffect hook is called only once when block is first rendered.
 	useEffect( () => {
 		//Theoretically useEffect would ensure we only fire this once, but I don't want to fire it when we get data to edit either.
 		setAttributes( { requestedPrompt: true } );
 		if ( ! attributes.requestedPrompt ) {
-			getSuggestionFromOpenAI( setAttributes, false, setPromptedForToken, formattedPrompt );
+			getSuggestionFromOpenAI(
+				setAttributes,
+				false,
+				setPromptedForToken,
+				formattedPrompt
+			);
 		}
 	}, [] );
 
 	return (
 		<div { ...useBlockProps() }>
-			{ promptedForToken && ( <div>
-				<TextControl
-					label="Please provide the OpenAI token to continue:"
-					value={ tokenField }
-					onChange={ ( val ) => setTokenField( val ) }
-				/>
-				<Button isPrimary onClick={ () => submitToken() }>{ 'Submit' }</Button>
-			</div> ) }
-			{ ! promptedForToken && ( <div>
-				<div className="disclaimer">GPT-3 says:</div>
-				<div className='content'>
-					<RawHTML>{ attributes.content.trim().replaceAll( "\n", "<br/>" ) }</RawHTML>
+			{ promptedForToken && (
+				<div>
+					<TextControl
+						label="Please provide the OpenAI token to continue:"
+						value={ tokenField }
+						onChange={ ( val ) => setTokenField( val ) }
+					/>
+					<Button isPrimary onClick={ () => submitToken() }>
+						{ 'Submit' }
+					</Button>
 				</div>
-			</div> ) }
+			) }
+			{ ! promptedForToken && (
+				<div>
+					<div className="disclaimer">GPT-3 says:</div>
+					<div className="content">
+						<RawHTML>
+							{ attributes.content
+								.trim()
+								.replaceAll( '\n', '<br/>' ) }
+						</RawHTML>
+					</div>
+				</div>
+			) }
 		</div>
 	);
 }

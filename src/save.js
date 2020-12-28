@@ -3,9 +3,7 @@
  *
  * @see https://developer.wordpress.org/block-editor/packages/packages-i18n/
  */
-import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
-
 
 /**
  * The save function defines the way in which the different attributes should
@@ -18,9 +16,5 @@ import { useBlockProps } from '@wordpress/block-editor';
  */
 export default function save( { attributes } ) {
 	const blockProps = useBlockProps.save();
-	return (
-		<div { ...blockProps }>
-			{ attributes.content }
-		</div>
-	);
+	return <div { ...blockProps }>{ attributes.content }</div>;
 }
