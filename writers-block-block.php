@@ -28,7 +28,7 @@ function writers_block_call_openai( WP_REST_Request $request ) {
 	// We gotta stop if the token is not there.
 	if ( empty( $token ) || strlen( $token ) < 5 ) {
 		//TODO: I'm sure there is a way to pass 401 and not 500 here, but this way is not working.
-		return new WP_Error( 'openai_token_missing', __( 'Please provide a token' ), [ 'http_code' => 401 ] );
+		return new WP_Error( 'openai_token_missing', __( 'Please provide a token' ), [ 'status' => 401 ] );
 	}
 
 	if ( get_transient( 'openai-response' ) ) {
@@ -78,7 +78,7 @@ function create_block_writers_block_block_block_init() {
 	wp_register_script(
 		'create-block-writers-block-block-block-editor',
 		plugins_url( $index_js, __FILE__ ),
-		$script_asset['dependencies'],
+		array_merge( $script_asset['dependencies'], [ 'wp-data', 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-block-editor' ] ), // This is hardcoded here because Jetpack does not play nice with ES6 dependencies for these.
 		$script_asset['version']
 	);
 	wp_set_script_translations( 'create-block-writers-block-block-block-editor', 'writers-block-block' );
