@@ -5,8 +5,11 @@ Are you stuck with your writing? The next paragraph feels like drudgery and you 
 Writers Block Block uses [GPT-3](https://deliber.at/2020/gpt-3/) to generate the next paragraph for you based on your current content of the post.
 
 Here it is writing poetry:
-![](https://user-images.githubusercontent.com/3775068/102711381-8c96ad00-42b9-11eb-97c8-ec0c2714e666.png)
-## How does it work?
+![Generated poetry](./assets/screenshot-1.png)
+
+## How does it work
+
+[WordPress plugin readme is here](./readme.txt)
 
 - You write some content
 - Insert `Writers Block Block` block into your post
