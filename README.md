@@ -1,4 +1,4 @@
-# WordPress Writers Block Block
+# WordPress Writer's Block Block
 
 This is a WordPress Gutenberg editor plugin that will put the power of OpenAI in your blog posts.
 Are you stuck with your writing? The next paragraph feels like drudgery and you don't know how to continue?
@@ -12,7 +12,7 @@ Here it is writing poetry:
 [WordPress plugin readme is here](./readme.txt)
 
 - You write some content
-- Insert `Writers Block Block` block into your post
+- Insert `Writer's Block Block` block into your post
 - It grabs the content of your post, calls OpenAI to generate a completion
 - Inserts that completion to your post
 - If you like it, you can transform that block into a Paragraph block. If you don't like it - you can delete it.
@@ -30,6 +30,6 @@ For development purposes, this installation covers setting up a development envi
 6. `npm start` will start WordPress development environment (using `wp-env`) and build appropriate build scripts.
 7. Now you can access WP-Admin using http://localhost:8888/wp-admin . Login `admin`, password `password`.
 8. Go to editor, write some content.
-9.  Use the block editor and search for `Writers Block Block` block. It will prompt for the OpenAI token first time you use it.
+9.  Use the block editor and search for `Writer's Block Block` block. It will prompt for the OpenAI token first time you use it.
 10. Profit.
 
