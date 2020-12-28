@@ -1,29 +1,10 @@
 import './editor.scss';
 
-const {
-	useState,
-	RawHTML,
-	useEffect,
-} = wp.element;
-
-const {
-	apiFetch
-} = wp;
-
-const {
-	useBlockProps
-} = wp.blockEditor;
-
-const {
-	Button,
-	TextControl
-} = wp.components;
-
-const {
-	useSelect
-} = wp.data;
-
-
+import { useState, RawHTML, useEffect } from '@wordpress/element';
+import apiFetch from '@wordpress/api-fetch';
+import { useBlockProps } from '@wordpress/block-editor';
+import { Button, TextControl } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 
 /**
  * This function formats the prompt to OpenAI.
