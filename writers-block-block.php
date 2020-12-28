@@ -3,12 +3,13 @@
  * Plugin Name:     Writers Block Block
  * Description:     Automatically generate new paragraphs using your existing content, GPT-3 and robots.
  * Version:         0.1.0
- * Author:          piszek.com
+ * Author:          Artur Piszek (artpi)
+ * Author URI:		https://piszek.com
  * License:         GPL-2.0-or-later
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:     writers-block-block
  *
- * @package         create-block
+ * @package         writers-block-block
  */
 
 /**
