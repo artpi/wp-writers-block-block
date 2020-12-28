@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:     Writers Block Block
+ * Plugin Name:     Writer's Block Block
  * Description:     Automatically generate new paragraphs using your existing content, GPT-3 and robots.
  * Version:         0.1.0
  * Author:          Artur Piszek (artpi)

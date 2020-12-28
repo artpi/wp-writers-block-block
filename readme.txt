@@ -1,4 +1,4 @@
-=== Writers Block Block ===
+=== Writer's Block Block ===
 Contributors:      artpi
 Tags:              block, openai, gpt-3, writing
 Requires at least: 5.6.0
@@ -15,7 +15,7 @@ A block generating writing prompts using OpenAI's GPT-3. **You will need OpenAI 
 GPT-3 is a text-completion algorithm developed by OpenAI - [read more here](https://deliber.at/2020/gpt-3/).
 It can generate text using a provided sample. And so - it can help you get out of the writer's block!
 
-Writer's Block Block provides a Gutenberg block that completes your content for you. Simply write few paragraphs and insert writers block block into your post to see what robots can write for you.
+Writer's Block Block provides a Gutenberg block that completes your content for you. Simply write few paragraphs and insert writer's block block into your post to see what robots can write for you.
 
 == Installation ==
 
@@ -29,7 +29,7 @@ Writer's Block Block provides a Gutenberg block that completes your content for 
 == How does it work ==
 
 * You write some content
-* Insert `Writers Block Block` block into your post
+* Insert `Writer's Block Block` block into your post
 * It grabs the content of your post, calls OpenAI to generate a completion
 * Inserts that completion to your post
 * If you like it, you can transform that block into a Paragraph block. If you don't like it - you can delete it.
