@@ -375,7 +375,7 @@ function getSuggestionFromOpenAI(setAttributes, token, setPromptedForToken, form
     });
   }).catch(function (res) {
     // We have not yet submitted a token.
-    if (res.code === 'openai_token_missing') {
+    if (res.code === 'openai_token_missing' || res.code === 'openai_token_incorrect') {
       setPromptedForToken(true);
     }
   });
