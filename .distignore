@@ -10,3 +10,4 @@ package.json
 package-lock.json
 .editorconfig
 /src
+.wp-env.json
