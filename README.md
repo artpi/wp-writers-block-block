@@ -5,7 +5,7 @@ Are you stuck with your writing? The next paragraph feels like drudgery and you 
 Writers Block Block uses [GPT-3](https://deliber.at/2020/gpt-3/) to generate the next paragraph for you based on your current content of the post.
 
 Here it is writing poetry:
-![Generated poetry](./assets/screenshot-1.png)
+![Generated poetry](./.wordpress-org/screenshot-1.png)
 
 ## How does it work
 
