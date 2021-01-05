@@ -1,6 +1,6 @@
 {
 	"name": "writers-block-block",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Automatically generate new paragraphs using your existing content, GPT-3 and robots.",
 	"author": "artpi",
 	"license": "GPL-2.0-or-later",
