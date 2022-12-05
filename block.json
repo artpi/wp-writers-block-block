@@ -1,11 +1,11 @@
 {
 	"apiVersion": 2,
-	"name": "create-block/writers-block-block",
-	"title": "Writers Block Block",
+	"name": "coauthor/paragraph",
+	"title": "Coauthor Paragraph",
 	"category": "widgets",
 	"icon": "welcome-write-blog",
 	"description": "Generate new paragraph using your existing content and GPT-3.",
-	"textdomain": "writers-block-block",
+	"textdomain": "coauthor",
 	"supports": {
 		"html": false
 	},

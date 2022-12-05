@@ -40,7 +40,7 @@ function getSuggestionFromOpenAI(
 	}
 
 	apiFetch( {
-		path: '/writers-block/prompt',
+		path: '/coauthor/prompt',
 		method: 'POST',
 		data: data,
 	} )
@@ -109,7 +109,6 @@ export default function Edit( { attributes, setAttributes } ) {
 			) }
 			{ ! promptedForToken && (
 				<div>
-					<div className="disclaimer">GPT-3 says:</div>
 					<div className="content">
 						<RawHTML>
 							{ attributes.content

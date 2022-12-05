@@ -7,17 +7,19 @@
  * Author URI:		https://piszek.com
  * License:         GPL-2.0-or-later
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:     writers-block-block
+ * Text Domain:     coauthor
  *
- * @package         writers-block-block
+ * @package         coauthor
  */
 
 /**
  * This is an API endpoint to pass requests on to OpenAI
  */
-function writers_block_call_openai( WP_REST_Request $request ) {
+function coauthor_call_openai( WP_REST_Request $request ) {
 	//We are saving responses as transients, so that we don't spam the API.
 	$parameters = $request->get_params();
+
+	return array( 'prompts' => [ [ 'text' => 'Potatoes are the best vegetable ever' ] ] );
 
 	if ( ! empty( $parameters['token'] ) ) {
 		$token = $parameters['token'];
@@ -65,28 +67,28 @@ function writers_block_call_openai( WP_REST_Request $request ) {
  *
  * @see https://developer.wordpress.org/block-editor/tutorials/block-tutorial/applying-styles-with-stylesheets/
  */
-function create_block_writers_block_block_block_init() {
+function create_block_coauthor_init() {
 	$dir = __DIR__;
 
 	$script_asset_path = "$dir/build/index.asset.php";
 	if ( ! file_exists( $script_asset_path ) ) {
 		throw new Error(
-			'You need to run `npm start` or `npm run build` for the "create-block/writers-block-block" block first.'
+			'You need to run `npm start` or `npm run build` for the "create-block/coauthor" block first.'
 		);
 	}
 	$index_js     = 'build/index.js';
 	$script_asset = require( $script_asset_path );
 	wp_register_script(
-		'create-block-writers-block-block-block-editor',
+		'create-block-coauthor-block-editor',
 		plugins_url( $index_js, __FILE__ ),
 		array_merge( $script_asset['dependencies'], [ 'wp-data', 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-block-editor' ] ), // This is hardcoded here because Jetpack does not play nice with ES6 dependencies for these.
 		$script_asset['version']
 	);
-	wp_set_script_translations( 'create-block-writers-block-block-block-editor', 'writers-block-block' );
+	wp_set_script_translations( 'create-block-coauthor-block-editor', 'coauthor' );
 
 	$editor_css = 'build/index.css';
 	wp_register_style(
-		'create-block-writers-block-block-block-editor',
+		'create-block-coauthor-block-editor',
 		plugins_url( $editor_css, __FILE__ ),
 		array(),
 		filemtime( "$dir/$editor_css" )
@@ -94,21 +96,21 @@ function create_block_writers_block_block_block_init() {
 
 	$style_css = 'build/style-index.css';
 	wp_register_style(
-		'create-block-writers-block-block-block',
+		'create-block-coauthor-block',
 		plugins_url( $style_css, __FILE__ ),
 		array(),
 		filemtime( "$dir/$style_css" )
 	);
 
-	register_block_type( 'create-block/writers-block-block', array(
-		'editor_script' => 'create-block-writers-block-block-block-editor',
-		'editor_style'  => 'create-block-writers-block-block-block-editor',
-		'style'         => 'create-block-writers-block-block-block',
+	register_block_type( 'create-block/coauthor', array(
+		'editor_script' => 'create-block-coauthor-block-editor',
+		'editor_style'  => 'create-block-coauthor-block-editor',
+		'style'         => 'create-block-coauthor-block',
 	) );
 	add_action( 'rest_api_init', function () {
-		register_rest_route( 'writers-block', '/prompt', array(
+		register_rest_route( 'coauthor', '/prompt', array(
 			'methods' => 'POST',
-			'callback' => 'writers_block_call_openai',
+			'callback' => 'coauthor_call_openai',
 			'args' => array(
 				'content' => array( "required" => true ),
 				'token' => array( "required" => false ),
@@ -120,5 +122,5 @@ function create_block_writers_block_block_block_init() {
 	  } );
 }
 
-add_action( 'init', 'create_block_writers_block_block_block_init' );
+add_action( 'init', 'create_block_coauthor_init' );
 

@@ -10,12 +10,12 @@ import save from './save';
  *
  * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
  */
-registerBlockType( 'writers-block-block/generate-suggestion', {
+registerBlockType( 'coauthor/paragraph', {
 	apiVersion: 2,
-	title: __( 'Writers Block Block', 'writers-block-block' ),
+	title: __( 'Coauthor Paragraph', 'coauthor' ),
 	description: __(
 		'Automatically generate new paragraphs using your existing content, GPT-3 and robots.',
-		'writers-block-block'
+		'coauthor'
 	),
 	category: 'common',
 	icon: 'welcome-write-blog',
@@ -28,7 +28,7 @@ registerBlockType( 'writers-block-block/generate-suggestion', {
 			source: 'text',
 			default: __(
 				'Please wait, consulting robots about your content… 🤖',
-				'writers-block-block'
+				'coauthor'
 			),
 		},
 		requestedPrompt: {
