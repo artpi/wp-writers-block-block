@@ -4,7 +4,7 @@
  * Description:     Automatically generate new paragraphs using your existing content, GPT-3 and robots.
  * Version:         0.1.1
  * Author:          Artur Piszek (artpi)
- * Author URI:		https://piszek.com
+ * Author URI:      https://piszek.com
  * License:         GPL-2.0-or-later
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:     coauthor
@@ -18,21 +18,10 @@
 function coauthor_call_openai( WP_REST_Request $request ) {
 	//We are saving responses as transients, so that we don't spam the API.
 	$parameters = $request->get_params();
-	$content = strip_tags( $parameters['content'] );
+	$content    = strip_tags( $parameters['content'] );
 	// Useful for testing:
 	//sleep(2);
 	//return array( 'prompts' => [ [ 'text' => 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?' ] ] );
-
-	// If this is being called on WPCOM, than use WPCOM Open AI library.
-	if ( defined( 'IS_WPCOM' ) && IS_WPCOM && file_exists( WP_CONTENT_DIR . '/lib/class.openai.php' ) ) {
-		require_once WP_CONTENT_DIR . '/lib/class.openai.php';
-		$openai = new OpenAI();
-		$response = $openai->request_gpt_completion( $content );
-		if( is_wp_error( $response ) ) {
-			return $response;
-		}
-		return array( 'prompts' => [ $response ] );
-	}
 
 	if ( ! empty( $parameters['token'] ) ) {
 		$token = $parameters['token'];
@@ -51,25 +40,27 @@ function coauthor_call_openai( WP_REST_Request $request ) {
 		$result = json_decode( get_transient( 'openai-response' ) );
 		return array( 'prompts' => $result->choices );
 	}
-	
+
 	$api_call = wp_remote_post(
 		'https://api.openai.com/v1/completions',
 		array(
-			'headers' => array(
-				'Content-Type' => 'application/json',
+			'headers'     => array(
+				'Content-Type'  => 'application/json',
 				'Authorization' => 'Bearer ' . $token,
 			),
-			'body'        => json_encode( [
-				'model' => 'text-davinci-003',
-				'prompt' => $content,
-				'max_tokens' => 110, // This is length of generated prompt. A token is about 4 chars. I took 110 from Lex.page.
-			] ),
+			'body'        => json_encode(
+				[
+					'model'      => 'text-davinci-003',
+					'prompt'     => $content,
+					'max_tokens' => 110, // This is length of generated prompt. A token is about 4 chars. I took 110 from Lex.page.
+				]
+			),
 			'method'      => 'POST',
 			'data_format' => 'body',
-			'timeout' => 60,
+			'timeout'     => 60,
 		)
 	);
-	if ( is_wp_error( $api_call )) {
+	if ( is_wp_error( $api_call ) ) {
 		return $api_call;
 	}
 	// Only allow a new call every 60s - TODO: Maybe there should be some message in the editor that it's recycled message?
@@ -94,7 +85,7 @@ function create_block_coauthor_init() {
 		);
 	}
 	$index_js     = 'build/index.js';
-	$script_asset = require( $script_asset_path );
+	$script_asset = require $script_asset_path;
 	wp_register_script(
 		'create-block-coauthor-block-editor',
 		plugins_url( $index_js, __FILE__ ),
@@ -119,24 +110,35 @@ function create_block_coauthor_init() {
 		filemtime( "$dir/$style_css" )
 	);
 
-	register_block_type( 'create-block/coauthor', array(
-		'editor_script' => 'create-block-coauthor-block-editor',
-		'editor_style'  => 'create-block-coauthor-block-editor',
-		'style'         => 'create-block-coauthor-block',
-	) );
-	add_action( 'rest_api_init', function () {
-		register_rest_route( 'coauthor', '/prompt', array(
-			'methods' => 'POST',
-			'callback' => 'coauthor_call_openai',
-			'args' => array(
-				'content' => array( "required" => true ),
-				'token' => array( "required" => false ),
-			),
-		  	'permission_callback' => function () { // Only for admins for time being
-				return current_user_can( 'edit_posts' );
-		   	}
-		) );
-	  } );
+	register_block_type(
+		'create-block/coauthor',
+		array(
+			'editor_script' => 'create-block-coauthor-block-editor',
+			'editor_style'  => 'create-block-coauthor-block-editor',
+			'style'         => 'create-block-coauthor-block',
+		)
+	);
+	add_action(
+		'rest_api_init',
+		function () {
+			register_rest_route(
+				'coauthor',
+				'/prompt',
+				array(
+					'methods'             => 'POST',
+					'callback'            => 'coauthor_call_openai',
+					'args'                => array(
+						'content' => array( 'required' => true ),
+						'token'   => array( 'required' => false ),
+					),
+					'permission_callback' => function () {
+						// Only for admins for time being
+						return current_user_can( 'edit_posts' );
+					},
+				)
+			);
+		}
+	);
 }
 
 add_action( 'init', 'create_block_coauthor_init' );
