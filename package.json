@@ -14,7 +14,7 @@
 		"packages-update": "wp-scripts packages-update"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^3.0.0",
-		"@wordpress/scripts": "^12.6.0"
+		"@wordpress/env": "^5.7.0",
+		"@wordpress/scripts": "^24.6.0"
 	}
 }
