@@ -5,6 +5,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { useBlockProps } from '@wordpress/block-editor';
 import { Button, TextControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { Spinner } from '@wordpress/components';
 
 /**
  * This function formats the prompt to OpenAI.
@@ -31,7 +32,8 @@ function getSuggestionFromOpenAI(
 	setAttributes,
 	token,
 	setPromptedForToken,
-	formattedPrompt
+	formattedPrompt,
+	setLoadingCompletion
 ) {
 	const data = { content: formattedPrompt };
 	if ( token ) {
@@ -39,18 +41,30 @@ function getSuggestionFromOpenAI(
 		setPromptedForToken( false );
 	}
 
+	setLoadingCompletion( true );
+	setAttributes( { requestedPrompt:true } ); // This will prevent double submitting.
 	apiFetch( {
 		path: '/coauthor/prompt',
 		method: 'POST',
 		data: data,
 	} )
 		.then( ( res ) => {
-			setAttributes( { content: res.prompts[ 0 ].text } );
+			setLoadingCompletion( false );
+			const content = res.prompts[ 0 ].text;
+			// This is to animate text input. I think this will give an idea of a "better" AI.
+			// At this point this is an established pattern.
+			const tokens = content.split( ' ' );
+			for ( let i=0; i < tokens.length; i++ ) {
+				const output = tokens.slice( 0, i ).join( ' ' );
+				setTimeout( () => setAttributes( { content: output } ), 50 * i );
+			}
 		} )
 		.catch( ( res ) => {
 			// We have not yet submitted a token.
 			if ( res.code === 'openai_token_missing' ) {
 				setPromptedForToken( true );
+				setLoadingCompletion( false );
+				setAttributes( { requestedPrompt:false } ); // You get another chance.
 			}
 		} );
 }
@@ -65,6 +79,7 @@ function getSuggestionFromOpenAI(
  */
 export default function Edit( { attributes, setAttributes } ) {
 	const [ promptedForToken, setPromptedForToken ] = useState( false );
+	const [ loadingCompletion, setLoadingCompletion ] = useState( false );
 	const [ tokenField, setTokenField ] = useState( '' );
 
 	const formattedPrompt = useSelect( ( select ) => {
@@ -76,19 +91,20 @@ export default function Edit( { attributes, setAttributes } ) {
 			setAttributes,
 			tokenField,
 			setPromptedForToken,
-			formattedPrompt
+			formattedPrompt,
+			setLoadingCompletion
 		);
 	}
 	//useEffect hook is called only once when block is first rendered.
 	useEffect( () => {
 		//Theoretically useEffect would ensure we only fire this once, but I don't want to fire it when we get data to edit either.
-		setAttributes( { requestedPrompt: true } );
-		if ( ! attributes.requestedPrompt ) {
+		if ( ! attributes.content && ! attributes.requestedPrompt ) {
 			getSuggestionFromOpenAI(
 				setAttributes,
 				false,
 				setPromptedForToken,
-				formattedPrompt
+				formattedPrompt,
+				setLoadingCompletion
 			);
 		}
 	}, [] );
@@ -107,15 +123,25 @@ export default function Edit( { attributes, setAttributes } ) {
 					</Button>
 				</div>
 			) }
-			{ ! promptedForToken && (
+			{ attributes.content && ! loadingCompletion && (
 				<div>
 					<div className="content">
 						<RawHTML>
-							{ attributes.content
+							{  attributes.content
 								.trim()
 								.replaceAll( '\n', '<br/>' ) }
 						</RawHTML>
 					</div>
+				</div>
+			) }
+			{ loadingCompletion && (
+				<div style={ {padding: '10px', textAlign: 'center' } }>
+					<Spinner
+					  style={{
+						height: 'calc(4px * 20)',
+						width: 'calc(4px * 20)'
+					  }}
+					/>
 				</div>
 			) }
 		</div>

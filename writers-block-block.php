@@ -19,7 +19,8 @@ function coauthor_call_openai( WP_REST_Request $request ) {
 	//We are saving responses as transients, so that we don't spam the API.
 	$parameters = $request->get_params();
 
-	return array( 'prompts' => [ [ 'text' => 'Potatoes are the best vegetable ever' ] ] );
+	//sleep(2);
+	//return array( 'prompts' => [ [ 'text' => 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?' ] ] );
 
 	if ( ! empty( $parameters['token'] ) ) {
 		$token = $parameters['token'];
@@ -41,15 +42,16 @@ function coauthor_call_openai( WP_REST_Request $request ) {
 	$content = strip_tags( $parameters['content'] );
 	
 	$api_call = wp_remote_post(
-		'https://api.openai.com/v1/engines/davinci/completions',
+		'https://api.openai.com/v1/completions',
 		array(
 			'headers' => array(
 				'Content-Type' => 'application/json',
 				'Authorization' => 'Bearer ' . $token,
 			),
 			'body'        => json_encode( [
+				'model' => 'text-davinci-003',
 				'prompt' => $content,
-				'max_tokens' => 64, // This is length of generated prompt. A token is about 4 chars.
+				'max_tokens' => 110, // This is length of generated prompt. A token is about 4 chars. I took 110 from Lex.page.
 			] ),
 			'method'      => 'POST',
 			'data_format' => 'body',

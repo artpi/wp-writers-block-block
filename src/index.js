@@ -25,11 +25,7 @@ registerBlockType( 'coauthor/paragraph', {
 	attributes: {
 		content: {
 			type: 'string',
-			source: 'text',
-			default: __(
-				'Please wait, consulting robots about your content… 🤖',
-				'coauthor'
-			),
+			source: 'text'
 		},
 		requestedPrompt: {
 			type: 'boolean',
