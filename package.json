@@ -11,7 +11,8 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"start": "wp-env start && wp-scripts start",
-		"packages-update": "wp-scripts packages-update"
+		"packages-update": "wp-scripts packages-update",
+		"wpcom-sync": "rsync -a ./ wpdev:/home/wpcom/public_html/wp-content/plugins/coauthor --exclude-from ./.distignore"
 	},
 	"devDependencies": {
 		"@wordpress/env": "^5.7.0",
