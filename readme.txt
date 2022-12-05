@@ -1,4 +1,4 @@
-=== Writer's Block Block ===
+=== Coauthor ===
 Contributors:      artpi
 Tags:              block, openai, gpt-3, writing
 Requires at least: 5.3.1
@@ -15,21 +15,21 @@ A block generating writing prompts using OpenAI's GPT-3. **You will need OpenAI 
 GPT-3 is a text-completion algorithm developed by OpenAI - [read more here](https://deliber.at/2020/gpt-3/).
 It can generate text using a provided sample. And so - it can help you get out of the writer's block!
 
-Writer's Block Block provides a Gutenberg block that completes your content for you. Simply write few paragraphs and insert writer's block block into your post to see what robots can write for you.
+Coauthor provides a Gutenberg block that completes your content for you. Simply write few paragraphs and insert Coauthor into your post to see what robots can write for you.
 
 == Installation ==
 
 1. Get OpenAI API token from [here](https://openai.com/blog/openai-api/)
 1. Install this plugin, activate
 1. Go to the block editor, write some content
-1. Search for "Writing Block Block" block, insert into your content
+1. Search for "Coauthor paragraph" block, insert into your content
 1. First time you use it, it will ask you for the OpenAI token
 1. When you submit the token or use it next time - it will auto-complete the writing for you.
 
 == How does it work ==
 
 * You write some content
-* Insert `Writer's Block Block` block into your post
+* Insert `Coauthor` block into your post
 * It grabs the content of your post, calls OpenAI to generate a completion
 * Inserts that completion to your post
 * If you like it, you can transform that block into a Paragraph block. If you don't like it - you can delete it.

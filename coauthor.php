@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:     Writer's Block Block
+ * Plugin Name:     Coauthor
  * Description:     Automatically generate new paragraphs using your existing content, GPT-3 and robots.
  * Version:         0.1.1
  * Author:          Artur Piszek (artpi)
@@ -66,8 +66,12 @@ function coauthor_call_openai( WP_REST_Request $request ) {
 			] ),
 			'method'      => 'POST',
 			'data_format' => 'body',
+			'timeout' => 60,
 		)
 	);
+	if ( is_wp_error( $api_call )) {
+		return $api_call;
+	}
 	// Only allow a new call every 60s - TODO: Maybe there should be some message in the editor that it's recycled message?
 	set_transient( 'openai-response', $api_call['body'], 60 );
 	$result = json_decode( $api_call['body'] );
