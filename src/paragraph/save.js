@@ -14,7 +14,7 @@ import { useBlockProps } from '@wordpress/block-editor';
  *
  * @return {WPElement} Element to render.
  */
-export default function save( { attributes } ) {
+ export default function save( { attributes } ) {
 	const blockProps = useBlockProps.save();
-	return <div { ...blockProps }><img src={ { attributes.content } }</div>;
+	return <div { ...blockProps }>{ attributes.content }</div>;
 }

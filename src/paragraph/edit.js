@@ -1,4 +1,4 @@
-import './editor.scss';
+import '../editor.scss';
 
 import { useState, RawHTML, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
@@ -123,21 +123,14 @@ export default function Edit( { attributes, setAttributes } ) {
 					</Button>
 				</div>
 			) }
-			{ ! attributes.requestedPrompt && (
-				<div>
-					<TextControl
-						label="What would you like to see?"
-						onChange={ ( val ) => setTokenField( val ) }
-					/>
-					<Button isPrimary onClick={ () => submitToken() }>
-						{ 'Submit' }
-					</Button>
-				</div>
-			) }
-			{ attributes.requestedPrompt && (
+			{ attributes.content && ! loadingCompletion && (
 				<div>
 					<div className="content">
-						{{ attributes.requestedPrompt }}
+						<RawHTML>
+							{  attributes.content
+								.trim()
+								.replaceAll( '\n', '<br/>' ) }
+						</RawHTML>
 					</div>
 				</div>
 			) }
