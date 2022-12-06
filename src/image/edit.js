@@ -3,7 +3,7 @@ import '../editor.scss';
 import { useState, RawHTML, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { useBlockProps } from '@wordpress/block-editor';
-import { Button, TextControl } from '@wordpress/components';
+import { Button, TextControl, Placeholder } from '@wordpress/components';
 import { Spinner } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
 import { store as blockEditorStore } from '@wordpress/block-editor';
@@ -59,6 +59,9 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
 	return (
 		<div { ...useBlockProps() }>
+			<Placeholder
+				label={ "Coauthor Image" }
+			>
 			{ ! attributes.requestedPrompt && (
 				<div>
 					<TextControl
@@ -77,8 +80,8 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 			) }
 			{  ! loadingImages && resultImages.length > 0 && (
 				<div>
-					<div>{ attributes.requestedPrompt }</div>
-					<div>{ "Please choose your image" }</div>
+					<div style={ {textAlign: 'center', margin: '12px', fontStyle: 'italic'} }>{ attributes.requestedPrompt }</div>
+					<div style={ { fontSize: '20px', lineHeight: '38px'} }>{ "Please choose your image" }</div>
 					<div style={ { flexDirection: 'row', justifyContent: 'space-between', textAlign: 'center' } }>
 					{ resultImages.map( image => (
 						<img
@@ -117,6 +120,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					/>
 				</div>
 			) }
+		</Placeholder>
 		</div>
 	);
 }
