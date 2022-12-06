@@ -5,44 +5,42 @@ import apiFetch from '@wordpress/api-fetch';
 import { useBlockProps } from '@wordpress/block-editor';
 import { Button, TextControl } from '@wordpress/components';
 import { Spinner } from '@wordpress/components';
+import { createBlock } from '@wordpress/blocks';
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { useSelect, useDispatch } from '@wordpress/data';
+
+
 
 
 function getImagesFromOpenAI(
 	prompt,
 	setAttributes,
-	setLoadingImages
+	setLoadingImages,
+	setResultImages
 ) {
 	setLoadingImages( true );
 	setAttributes( { requestedPrompt: prompt } ); // This will prevent double submitting.
-	setTimeout( () => {
-		setLoadingImages( false );
-		setAttributes( { content: 'potato' } );
-	}, 3000 );
 
-	// apiFetch( {
-	// 	path: '/coauthor/prompt',
-	// 	method: 'POST',
-	// 	data: data,
-	// } )
-	// 	.then( ( res ) => {
-	// 		setLoadingImages( false );
-	// 		const content = res.prompts[ 0 ].text;
-	// 		// This is to animate text input. I think this will give an idea of a "better" AI.
-	// 		// At this point this is an established pattern.
-	// 		const tokens = content.split( ' ' );
-	// 		for ( let i=0; i < tokens.length; i++ ) {
-	// 			const output = tokens.slice( 0, i ).join( ' ' );
-	// 			setTimeout( () => setAttributes( { content: output } ), 50 * i );
-	// 		}
-	// 	} )
-	// 	.catch( ( res ) => {
-	// 		// We have not yet submitted a token.
-	// 		if ( res.code === 'openai_token_missing' ) {
-	// 			setPromptedForToken( true );
-	// 			setLoadingImages( false );
-	// 			setAttributes( { requestedPrompt:false } ); // You get another chance.
-	// 		}
-	// 	} );
+	apiFetch( {
+		path: '/coauthor/image',
+		method: 'POST',
+		data: {
+			prompt
+		},
+	} )
+		.then( ( res ) => {
+			setLoadingImages( false );
+			console.log( 'DALLE IMAGES', res );
+			setResultImages( res.data );
+		} )
+		.catch( ( res ) => {
+			// We have not yet submitted a token.
+			if ( res.code === 'openai_token_missing' ) {
+				setPromptedForToken( true );
+				setLoadingImages( false );
+				setAttributes( { requestedPrompt: '' } ); // You get another chance.
+			}
+		} );
 }
 
 /**
@@ -53,9 +51,11 @@ function getImagesFromOpenAI(
  *
  * @return {WPElement} Element to render.
  */
-export default function Edit( { attributes, setAttributes } ) {
+export default function Edit( { attributes, setAttributes, clientId } ) {
 	const [ loadingImages, setLoadingImages ] = useState( false );
+	const [ resultImages, setResultImages ] = useState( [] );
 	const [ prompt, setPrompt ] = useState( '' );
+	const { replaceBlock } = useDispatch( blockEditorStore );
 
 	return (
 		<div { ...useBlockProps() }>
@@ -68,18 +68,42 @@ export default function Edit( { attributes, setAttributes } ) {
 					<Button isPrimary onClick={ () => getImagesFromOpenAI(
 						prompt,
 						setAttributes,
-						setLoadingImages
+						setLoadingImages,
+						setResultImages
 					) }>
 						{ 'Submit' }
 					</Button>
 				</div>
 			) }
+			{  ! loadingImages && resultImages.length > 0 && (
+				<div>
+					<div>{ attributes.requestedPrompt }</div>
+					<div>{ "Please choose your image" }</div>
+					<div style={ { flexDirection: 'row', justifyContent: 'space-between', textAlign: 'center' } }>
+					{ resultImages.map( image => (
+						<img
+							style={ { width: '128px', padding: '8px' } }
+							src={ image.url }
+							key={ image.url }
+							onClick={ () => {
+								replaceBlock(
+									clientId,
+									createBlock( 'core/image', {
+										url: image.url,
+										caption: attributes.requestedPrompt,
+										alt: attributes.requestedPrompt
+									} )
+								)
+							} }
+						/>
+					) ) }
+					</div>
+				</div>
+			) }
 			{ attributes.content && ! loadingImages && (
 				<div>
 					<div className="content">
-						<RawHTML>
-							{  attributes.content }
-						</RawHTML>
+						{  attributes.content }
 					</div>
 				</div>
 			) }
