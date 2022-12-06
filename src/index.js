@@ -2,14 +2,11 @@ import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
 import './style.scss';
-import Edit from './edit';
-import save from './save';
+import editParagraph from './paragraph/edit';
+import saveParagraph from './paragraph/save';
+import editImage from './image/edit';
+import saveImage from './image/save';
 
-/**
- * Every block starts by registering a new block type definition.
- *
- * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
- */
 registerBlockType( 'coauthor/paragraph', {
 	apiVersion: 2,
 	title: __( 'Coauthor Paragraph', 'coauthor' ),
@@ -50,10 +47,44 @@ registerBlockType( 'coauthor/paragraph', {
 	/**
 	 * @see ./edit.js
 	 */
-	edit: Edit,
+	edit: editParagraph,
 
 	/**
 	 * @see ./save.js
 	 */
-	save,
+	 saveParagraph,
+} );
+
+
+registerBlockType( 'coauthor/image', {
+	apiVersion: 2,
+	title: __( 'Coauthor Image', 'coauthor' ),
+	description: __(
+		'Automatically generate an illustration for your post',
+		'coauthor'
+	),
+	category: 'common',
+	icon: 'welcome-write-blog',
+	supports: {
+		html: false,
+	},
+	attributes: {
+		content: {
+			type: 'string',
+			source: 'text'
+		},
+		requestedPrompt: {
+			type: 'string',
+			default: false,
+		},
+	},
+	/**
+	 * @see ./edit.js
+	 */
+	edit: editImage,
+
+	/**
+	 * @see ./save.js
+	 */
+	save: saveImage,
 } );
