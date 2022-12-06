@@ -104,9 +104,9 @@ function coauthor_call_dalle( WP_REST_Request $request ) {
 			),
 			'body'        => json_encode(
 				[
-					'prompt'     => $parameters['prompt'],
-					'n' => 4, // Generate 4 options each time,
-					'size' => '512x512'
+					'prompt' => $parameters['prompt'],
+					'n'      => 4, // Generate 4 options each time,
+					'size'   => '512x512',
 				]
 			),
 			'method'      => 'POST',
@@ -200,7 +200,7 @@ function create_block_coauthor_init() {
 					'callback'            => 'coauthor_call_dalle',
 					'args'                => array(
 						'prompt' => array( 'required' => true ),
-						'token'   => array( 'required' => false ),
+						'token'  => array( 'required' => false ),
 					),
 					'permission_callback' => function () {
 						// Only for admins for time being
