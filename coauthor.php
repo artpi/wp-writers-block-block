@@ -118,7 +118,7 @@ function coauthor_call_dalle( WP_REST_Request $request ) {
 		return $api_call;
 	}
 	// We cache responses for the same prompts for a month.
-	set_transient( 'openai-dalle-response-' . md5( $parameters['prompt'] ), $api_call['body'], 3600 * 24 * 31 );
+	set_transient( 'openai-dalle-response-' . md5( $parameters['prompt'] ), $api_call['body'], 3600 ); // Images are stored on OpenAI servers for only an hour.
 	$result = json_decode( $api_call['body'] );
 	return $result;
 }
