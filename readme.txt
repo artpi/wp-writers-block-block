@@ -76,7 +76,8 @@ I have limited the API calls to one per minute. That means, that you will never 
 
 == Screenshots ==
 
-1. Auto-completed poetry
+1. Auto-completed poetry with Coauthor Paragraph
+2. Coauthor Image showing image selection
 
 == Changelog ==
 
