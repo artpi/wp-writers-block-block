@@ -104,10 +104,10 @@ function coauthor_call_dalle( WP_REST_Request $request ) {
 			),
 			'body'        => json_encode(
 				[
-					'prompt' => $parameters['prompt'],
-					'n'      => 4, // Generate 4 options each time,
-					'size'   => '512x512',
-					'response_format' => 'b64_json'
+					'prompt'          => $parameters['prompt'],
+					'n'               => 4, // Generate 4 options each time,
+					'size'            => '512x512',
+					'response_format' => 'b64_json',
 				]
 			),
 			'method'      => 'POST',
