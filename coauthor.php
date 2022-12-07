@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:     Coauthor - AI Writing Assistant and artist
- * Description:     Automatically generate new paragraphs using your existing content, GPT-3 and robots.
+ * Plugin Name:     Coauthor - AI Writing Assistant and Artist
+ * Description:     Automatically generate new paragraphs and Images using OpenAI.
  * Version:         0.3.0
  * Author:          Artur Piszek (artpi)
  * Author URI:      https://piszek.com

@@ -1,4 +1,4 @@
-=== Coauthor - AI Writing Assistant and artist ===
+=== Coauthor - AI Writing Assistant and Artist ===
 Contributors:      artpi
 Tags:              block, openai, gpt3, ai, dalle
 Requires at least: 5.3.1
