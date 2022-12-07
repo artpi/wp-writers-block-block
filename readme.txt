@@ -1,39 +1,53 @@
-=== Coauthor ===
+=== Coauthor - AI Writing Assistant and artist ===
 Contributors:      artpi
-Tags:              block, openai, gpt-3, writing
+Tags:              block, openai, gpt3, ai, dalle
 Requires at least: 5.3.1
-Tested up to:      5.3.1
-Stable tag:        0.1.1
+Tested up to:      6.1.1
+Stable tag:        0.3.0
 Requires PHP:      7.0.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-A block generating writing prompts using OpenAI's GPT-3. **You will need OpenAI token to use this block**.
+
+Coauthor helps you write with GPT-3 and illustrate your posts with DALL-e. You will need an OpenAI token to use this block.
 
 == Description ==
 
+Coauthor brings the power of AI to help you focus on your best writing:
+- Coauthor Paragraph completes your post using GPT-3
+- Coauthor Image lets you conjure beautiful images painted by AI
+
 GPT-3 is a text-completion algorithm developed by OpenAI - [read more here](https://deliber.at/2020/gpt-3/).
 It can generate text using a provided sample. And so - it can help you get out of the writer's block!
-
-Coauthor provides a Gutenberg block that completes your content for you. Simply write few paragraphs and insert Coauthor into your post to see what robots can write for you.
 
 == Installation ==
 
 1. Get OpenAI API token from [here](https://openai.com/blog/openai-api/)
 1. Install this plugin, activate
 1. Go to the block editor, write some content
-1. Search for "Coauthor paragraph" block, insert into your content
+1. Search for "Coauthor Paragraph" block, insert into your content
 1. First time you use it, it will ask you for the OpenAI token
 1. When you submit the token or use it next time - it will auto-complete the writing for you.
 
 == How does it work ==
 
+=== Coauthor Paragraph ===
+
 * You write some content
-* Insert `Coauthor` block into your post
+* Insert `Coauthor Paragraph` block into your post
 * It grabs the content of your post, calls OpenAI to generate a completion
 * Inserts that completion to your post
 * If you like it, you can transform that block into a Paragraph block. If you don't like it - you can delete it.
 * This plugin is automatically limiting the requests to one per 60s to protect your OpenAI quota. If you call the suggestion endpoint in succession, you will get the same answer.
+
+=== Coauthor Image ===
+
+* Insert `Coauthor Image` block into your post
+* Fill in the prompt to generate an image you would like to see
+* It calls OpenAI api to generate 4 images
+* You choose one that you like best
+* That image gets uploaded to your media gallery and inserted into your post
+* Image generations are cached for a month. If you ask for images using the same prompt, you will get the same result.
 
 == Frequently Asked Questions ==
 
