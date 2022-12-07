@@ -3,7 +3,7 @@ Contributors:      artpi
 Tags:              block, openai, gpt3, ai, dalle
 Requires at least: 5.3.1
 Tested up to:      6.1.1
-Stable tag:        0.3.0
+Stable tag:        0.3.1
 Requires PHP:      7.0.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -88,3 +88,8 @@ I have limited the API calls to one per minute. That means, that you will never 
 = 0.1.1 =
 
 * Fix WP Version preventing installation on WP 5.6
+
+= 0.3.1 =
+
+* Rename to Coauthor
+* Introduce another block - Coauthor Image to generate images using DALL-e
