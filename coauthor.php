@@ -107,6 +107,7 @@ function coauthor_call_dalle( WP_REST_Request $request ) {
 					'prompt' => $parameters['prompt'],
 					'n'      => 4, // Generate 4 options each time,
 					'size'   => '512x512',
+					'response_format' => 'b64_json'
 				]
 			),
 			'method'      => 'POST',
@@ -118,7 +119,7 @@ function coauthor_call_dalle( WP_REST_Request $request ) {
 		return $api_call;
 	}
 	// We cache responses for the same prompts for a month.
-	set_transient( 'openai-dalle-response-' . md5( $parameters['prompt'] ), $api_call['body'], 3600 ); // Images are stored on OpenAI servers for only an hour.
+	set_transient( 'openai-dalle-response-' . md5( $parameters['prompt'] ), $api_call['body'], 3600 * 24 ); // Same prompts only allowed once a day.
 	$result = json_decode( $api_call['body'] );
 	return $result;
 }

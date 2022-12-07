@@ -9,9 +9,6 @@ import { createBlock } from '@wordpress/blocks';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 
-
-
-
 function getImagesFromOpenAI(
 	prompt,
 	setAttributes,
@@ -30,8 +27,10 @@ function getImagesFromOpenAI(
 	} )
 		.then( ( res ) => {
 			setLoadingImages( false );
-			console.log( 'DALLE IMAGES', res );
-			setResultImages( res.data );
+			const images = res.data.map( image => {
+				return 'data:image/png;base64,' + image.b64_json;
+			} );
+			setResultImages( images );
 		} )
 		.catch( ( res ) => {
 			// We have not yet submitted a token.
@@ -42,6 +41,7 @@ function getImagesFromOpenAI(
 			}
 		} );
 }
+
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -56,6 +56,18 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 	const [ resultImages, setResultImages ] = useState( [] );
 	const [ prompt, setPrompt ] = useState( '' );
 	const { replaceBlock } = useDispatch( blockEditorStore );
+
+	const { mediaUpload } = useSelect(
+		( select ) => {
+			const { getSettings } =
+				select( blockEditorStore );
+			const settings = getSettings();
+			return {
+				mediaUpload: settings.mediaUpload,
+			};
+		},
+		[]
+	);
 
 	return (
 		<div { ...useBlockProps() }>
@@ -84,19 +96,38 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					<div style={ { fontSize: '20px', lineHeight: '38px'} }>{ "Please choose your image" }</div>
 					<div style={ { flexDirection: 'row', justifyContent: 'space-between', textAlign: 'center' } }>
 					{ resultImages.map( image => (
+						// <div>
+						// 	{image.url}
+						// 	</div>
 						<img
 							style={ { width: '128px', padding: '8px' } }
-							src={ image.url }
-							key={ image.url }
-							onClick={ () => {
-								replaceBlock(
-									clientId,
-									createBlock( 'core/image', {
-										url: image.url,
-										caption: attributes.requestedPrompt,
-										alt: attributes.requestedPrompt
-									} )
-								)
+							src={ image }
+							key={ image }
+							onClick={ async () => {
+								// First convert image to a proper blob file
+								const resp = await fetch( image );
+								const blob = await resp.blob();
+								const file = new File( [ blob ], 'coauthor_image.png', { type: 'image/png'} )
+								// Actually upload the image
+								mediaUpload( {
+									filesList: [ file ],
+									onFileChange: ( [ img ] ) => {
+										replaceBlock(
+											clientId,
+											createBlock( 'core/image', {
+												url: img.url,
+												caption: attributes.requestedPrompt,
+												alt: attributes.requestedPrompt
+											} )
+										)
+									},
+									allowedTypes: [ 'image' ],
+									onError: ( message ) => {
+										// TODO: Needs some refinement.
+										console.error( message );
+									},
+								} );
+
 							} }
 						/>
 					) ) }
