@@ -3,7 +3,7 @@ import '../editor.scss';
 import { useState, RawHTML, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { useBlockProps } from '@wordpress/block-editor';
-import { Button, TextControl, Placeholder } from '@wordpress/components';
+import { Button, Placeholder, TextareaControl, Flex, FlexBlock, FlexItem } from '@wordpress/components';
 import { Spinner } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
 import { store as blockEditorStore } from '@wordpress/block-editor';
@@ -87,7 +87,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					label={ "Coauthor Image" }
 				>
 				<div>
-					<TextControl
+					<TextareaControl
 						label="What would you like to see?"
 						onChange={ setPrompt }
 					/>
@@ -110,50 +110,51 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 				<div>
 					<div style={ {textAlign: 'center', margin: '12px', fontStyle: 'italic'} }>{ attributes.requestedPrompt }</div>
 					<div style={ { fontSize: '20px', lineHeight: '38px'} }>{ "Please choose your image" }</div>
-					<div style={ { flexDirection: 'row', justifyContent: 'space-between', textAlign: 'center' } }>
+					<Flex direction='row' justify={ 'space-between' } >
 					{ resultImages.map( image => (
-						<img
-							style={ { width: '128px', padding: '8px' } }
-							src={ image }
-							key={ image }
-							onClick={ async () => {
-								if ( loadingImages ) {
-									return;
-								}
-								setLoadingImages( true );
-								// First convert image to a proper blob file
-								const resp = await fetch( image );
-								const blob = await resp.blob();
-								const file = new File( [ blob ], 'coauthor_image.png', { type: 'image/png'} )
-								// Actually upload the image
-								mediaUpload( {
-									filesList: [ file ],
-									onFileChange: ( [ img ] ) => {
-										if ( ! img.id ) {
-											// Without this image gets uploaded twice
-											return;
-										}
-										replaceBlock(
-											clientId,
-											createBlock( 'core/image', {
-												url: img.url,
-												caption: attributes.requestedPrompt,
-												alt: attributes.requestedPrompt
-											} )
-										)
-									},
-									allowedTypes: [ 'image' ],
-									onError: ( message ) => {
-										// TODO: Needs some refinement.
-										console.error( message );
-										setLoadingImages( false );
-									},
-								} );
+						<FlexBlock key={ image }>
+							<img
+								className='wp-block-coauthor-image-image'
+								src={ image }
+								onClick={ async () => {
+									if ( loadingImages ) {
+										return;
+									}
+									setLoadingImages( true );
+									// First convert image to a proper blob file
+									const resp = await fetch( image );
+									const blob = await resp.blob();
+									const file = new File( [ blob ], 'coauthor_image.png', { type: 'image/png'} )
+									// Actually upload the image
+									mediaUpload( {
+										filesList: [ file ],
+										onFileChange: ( [ img ] ) => {
+											if ( ! img.id ) {
+												// Without this image gets uploaded twice
+												return;
+											}
+											replaceBlock(
+												clientId,
+												createBlock( 'core/image', {
+													url: img.url,
+													caption: attributes.requestedPrompt,
+													alt: attributes.requestedPrompt
+												} )
+											)
+										},
+										allowedTypes: [ 'image' ],
+										onError: ( message ) => {
+											// TODO: Needs some refinement.
+											console.error( message );
+											setLoadingImages( false );
+										},
+									} );
 
-							} }
-						/>
+								} }
+							/>
+						</FlexBlock>
 					) ) }
-					</div>
+					</Flex>
 				</div>
 				</Placeholder>
 			) }
