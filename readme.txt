@@ -3,7 +3,7 @@ Contributors:      artpi
 Tags:              block, openai, gpt3, ai, dalle
 Requires at least: 5.3.1
 Tested up to:      6.1.1
-Stable tag:        0.3.2
+Stable tag:        0.3.5
 Requires PHP:      7.0.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
