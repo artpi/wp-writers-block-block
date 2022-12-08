@@ -117,6 +117,10 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 							src={ image }
 							key={ image }
 							onClick={ async () => {
+								if ( loadingImages ) {
+									return;
+								}
+								setLoadingImages( true );
 								// First convert image to a proper blob file
 								const resp = await fetch( image );
 								const blob = await resp.blob();
@@ -125,6 +129,10 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 								mediaUpload( {
 									filesList: [ file ],
 									onFileChange: ( [ img ] ) => {
+										if ( ! img.id ) {
+											// Without this image gets uploaded twice
+											return;
+										}
 										replaceBlock(
 											clientId,
 											createBlock( 'core/image', {
@@ -138,6 +146,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 									onError: ( message ) => {
 										// TODO: Needs some refinement.
 										console.error( message );
+										setLoadingImages( false );
 									},
 								} );
 
