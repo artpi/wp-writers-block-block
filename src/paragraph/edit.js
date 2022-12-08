@@ -32,8 +32,14 @@ function getSuggestionFromOpenAI(
 	setAttributes,
 	setPromptedForToken,
 	formattedPrompt,
-	setLoadingCompletion
+	setLoadingCompletion,
+	setNeedMore
 ) {
+	if( formattedPrompt.length < 480 ) {
+		setNeedMore( true );
+		return;
+	}
+	setNeedMore( false );
 	const data = { content: formattedPrompt };
 	setLoadingCompletion( true );
 	setAttributes( { requestedPrompt:true } ); // This will prevent double submitting.
@@ -74,6 +80,7 @@ function getSuggestionFromOpenAI(
 export default function Edit( { attributes, setAttributes } ) {
 	const [ promptedForToken, setPromptedForToken ] = useState( false );
 	const [ loadingCompletion, setLoadingCompletion ] = useState( false );
+	const [ needMore, setNeedMore ] = useState( false );
 
 	const formattedPrompt = useSelect( ( select ) => {
 		return formatPromptToOpenAI( select( 'core/block-editor' ) );
@@ -87,13 +94,37 @@ export default function Edit( { attributes, setAttributes } ) {
 				setAttributes,
 				setPromptedForToken,
 				formattedPrompt,
-				setLoadingCompletion
+				setLoadingCompletion,
+				setNeedMore
 			);
+
 		}
 	}, [] );
 
 	return (
 		<div { ...useBlockProps() }>
+			{ needMore && (
+				<Placeholder
+					label={ "Coauthor Paragraph" }
+					instructions = { "Please write a little bit more. Coauthor needs more text to make the gears spin." }
+				>
+					<Button
+						isPrimary
+						onClick={
+							() => {
+								getSuggestionFromOpenAI(
+									setAttributes,
+									setPromptedForToken,
+									formattedPrompt,
+									setLoadingCompletion,
+									setNeedMore
+								);
+						}
+					}>
+						{ "Retry" }
+					</Button>
+				</Placeholder>
+			) }
 			{ promptedForToken && (
 				<Placeholder
 					label={ "Coauthor Paragraph" }
