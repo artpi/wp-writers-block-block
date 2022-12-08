@@ -3,7 +3,7 @@ import '../editor.scss';
 import { useState, RawHTML, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { useBlockProps } from '@wordpress/block-editor';
-import { Button, TextControl } from '@wordpress/components';
+import { Placeholder, Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Spinner } from '@wordpress/components';
 
@@ -30,17 +30,11 @@ function formatPromptToOpenAI( editor ) {
 
 function getSuggestionFromOpenAI(
 	setAttributes,
-	token,
 	setPromptedForToken,
 	formattedPrompt,
 	setLoadingCompletion
 ) {
 	const data = { content: formattedPrompt };
-	if ( token ) {
-		data.token = token;
-		setPromptedForToken( false );
-	}
-
 	setLoadingCompletion( true );
 	setAttributes( { requestedPrompt:true } ); // This will prevent double submitting.
 	apiFetch( {
@@ -61,10 +55,10 @@ function getSuggestionFromOpenAI(
 		} )
 		.catch( ( res ) => {
 			// We have not yet submitted a token.
-			if ( res.code === 'openai_token_missing' ) {
+			if ( res.code === 'token_missing' ) {
 				setPromptedForToken( true );
 				setLoadingCompletion( false );
-				setAttributes( { requestedPrompt:false } ); // You get another chance.
+				setAttributes( { requestedPrompt: false } ); // You get another chance.
 			}
 		} );
 }
@@ -80,28 +74,17 @@ function getSuggestionFromOpenAI(
 export default function Edit( { attributes, setAttributes } ) {
 	const [ promptedForToken, setPromptedForToken ] = useState( false );
 	const [ loadingCompletion, setLoadingCompletion ] = useState( false );
-	const [ tokenField, setTokenField ] = useState( '' );
 
 	const formattedPrompt = useSelect( ( select ) => {
 		return formatPromptToOpenAI( select( 'core/block-editor' ) );
 	}, [] );
 
-	function submitToken() {
-		getSuggestionFromOpenAI(
-			setAttributes,
-			tokenField,
-			setPromptedForToken,
-			formattedPrompt,
-			setLoadingCompletion
-		);
-	}
 	//useEffect hook is called only once when block is first rendered.
 	useEffect( () => {
 		//Theoretically useEffect would ensure we only fire this once, but I don't want to fire it when we get data to edit either.
 		if ( ! attributes.content && ! attributes.requestedPrompt ) {
 			getSuggestionFromOpenAI(
 				setAttributes,
-				false,
 				setPromptedForToken,
 				formattedPrompt,
 				setLoadingCompletion
@@ -112,16 +95,12 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<div { ...useBlockProps() }>
 			{ promptedForToken && (
-				<div>
-					<TextControl
-						label="Please provide the OpenAI token to continue:"
-						value={ tokenField }
-						onChange={ ( val ) => setTokenField( val ) }
-					/>
-					<Button isPrimary onClick={ () => submitToken() }>
-						{ 'Submit' }
-					</Button>
-				</div>
+				<Placeholder
+					label={ "Coauthor Paragraph" }
+					instructions = { "Please visit settings and input valid OpenAI token" }
+				>
+					<Button isPrimary href='options-general.php?page=coauthor' target='_blank'>{ "Visit Coauthor Settings" }</Button>
+				</Placeholder>
 			) }
 			{ attributes.content && ! loadingCompletion && (
 				<div>

@@ -13,7 +13,8 @@ function getImagesFromOpenAI(
 	prompt,
 	setAttributes,
 	setLoadingImages,
-	setResultImages
+	setResultImages,
+	setPromptedForToken
 ) {
 	setLoadingImages( true );
 	setAttributes( { requestedPrompt: prompt } ); // This will prevent double submitting.
@@ -34,7 +35,7 @@ function getImagesFromOpenAI(
 		} )
 		.catch( ( res ) => {
 			// We have not yet submitted a token.
-			if ( res.code === 'openai_token_missing' ) {
+			if ( res.code === 'token_missing' ) {
 				setPromptedForToken( true );
 				setLoadingImages( false );
 				setAttributes( { requestedPrompt: '' } ); // You get another chance.
@@ -56,6 +57,8 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 	const [ resultImages, setResultImages ] = useState( [] );
 	const [ prompt, setPrompt ] = useState( '' );
 	const { replaceBlock } = useDispatch( blockEditorStore );
+	const [ promptedForToken, setPromptedForToken ] = useState( false );
+
 
 	const { mediaUpload } = useSelect(
 		( select ) => {
@@ -71,10 +74,18 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
 	return (
 		<div { ...useBlockProps() }>
-			<Placeholder
-				label={ "Coauthor Image" }
-			>
-			{ ! attributes.requestedPrompt && (
+			{ promptedForToken && (
+				<Placeholder
+					label={ "Coauthor Image" }
+					instructions = { "Please visit settings and input valid OpenAI token" }
+				>
+					<Button isPrimary href='options-general.php?page=coauthor' target='_blank'>{ "Visit Coauthor Settings" }</Button>
+				</Placeholder>
+			) }
+			{ ! promptedForToken && ! attributes.requestedPrompt && (
+				<Placeholder
+					label={ "Coauthor Image" }
+				>
 				<div>
 					<TextControl
 						label="What would you like to see?"
@@ -84,21 +95,23 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 						prompt,
 						setAttributes,
 						setLoadingImages,
-						setResultImages
+						setResultImages,
+						setPromptedForToken
 					) }>
 						{ 'Submit' }
 					</Button>
 				</div>
+				</Placeholder>
 			) }
 			{  ! loadingImages && resultImages.length > 0 && (
+				<Placeholder
+					label={ "Coauthor Image" }
+				>
 				<div>
 					<div style={ {textAlign: 'center', margin: '12px', fontStyle: 'italic'} }>{ attributes.requestedPrompt }</div>
 					<div style={ { fontSize: '20px', lineHeight: '38px'} }>{ "Please choose your image" }</div>
 					<div style={ { flexDirection: 'row', justifyContent: 'space-between', textAlign: 'center' } }>
 					{ resultImages.map( image => (
-						// <div>
-						// 	{image.url}
-						// 	</div>
 						<img
 							style={ { width: '128px', padding: '8px' } }
 							src={ image }
@@ -133,15 +146,23 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					) ) }
 					</div>
 				</div>
+				</Placeholder>
 			) }
 			{ attributes.content && ! loadingImages && (
+				<Placeholder
+					label={ "Coauthor Image" }
+				>
 				<div>
 					<div className="content">
 						{  attributes.content }
 					</div>
 				</div>
+				</Placeholder>
 			) }
 			{ loadingImages && (
+				<Placeholder
+					label={ "Coauthor Image" }
+				>
 				<div style={ {padding: '10px', textAlign: 'center' } }>
 					<Spinner
 					  style={{
@@ -150,8 +171,8 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					  }}
 					/>
 				</div>
+				</Placeholder>
 			) }
-		</Placeholder>
 		</div>
 	);
 }
