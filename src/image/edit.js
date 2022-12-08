@@ -19,7 +19,7 @@ function getImagesFromOpenAI(
 	setAttributes( { requestedPrompt: prompt } ); // This will prevent double submitting.
 
 	apiFetch( {
-		path: '/coauthor/image',
+		path: '/wp/v2/openai/images/generations',
 		method: 'POST',
 		data: {
 			prompt

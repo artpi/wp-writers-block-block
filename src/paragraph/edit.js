@@ -44,7 +44,7 @@ function getSuggestionFromOpenAI(
 	setLoadingCompletion( true );
 	setAttributes( { requestedPrompt:true } ); // This will prevent double submitting.
 	apiFetch( {
-		path: '/coauthor/prompt',
+		path: '/wp/v2/openai/completions',
 		method: 'POST',
 		data: data,
 	} )
