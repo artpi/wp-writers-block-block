@@ -1,22 +1,39 @@
-# WordPress Coauthor
+![](./.wordpress-org/icon-128x128.png)
+
+#  WordPress Coauthor - AI Writing assistant
 
 This is a WordPress Gutenberg editor plugin that will put the power of OpenAI in your blog posts.
 Are you stuck with your writing? The next paragraph feels like drudgery and you don't know how to continue?
 Writers Block Block uses [GPT-3](https://deliber.at/2020/gpt-3/) to generate the next paragraph for you based on your current content of the post.
 
-Here it is writing poetry:
-![Generated poetry](./.wordpress-org/screenshot-1.png)
+You need a quick image for your post, but your art skill are failing you? DALL-E will generate an image for you.
 
 ## How does it work
 
 [WordPress plugin readme is here](./readme.txt)
+
+### Coauthor Paragraph
 
 - You write some content
 - Insert `Coauthor paragraph` block into your post
 - It grabs the content of your post, calls OpenAI to generate a completion
 - Inserts that completion to your post
 - If you like it, you can transform that block into a Paragraph block. If you don't like it - you can delete it.
-- This plugin is automatically limiting the requests to one per 60s to protect your OpenAI quota. If you call the suggestion endpoint in succession, you will get the same answer.
+- This plugin is automatically limiting the requests to one per 10s to protect your OpenAI quota. If you call the suggestion endpoint in succession, you will get the same answer.
+
+![Generated poetry](./.wordpress-org/screenshot-1.png)
+
+### Coauthor Image
+
+* Insert `Coauthor Image` block into your post
+* Fill in the prompt to generate an image you would like to see
+* It calls OpenAI api to generate 4 images
+* You choose one that you like best
+* That image gets uploaded to your media gallery and inserted into your post
+* Image generations are cached for a month. If you ask for images using the same prompt, you will get the same result.
+
+![Generated image](./.wordpress-org/screenshot-2.png)
+
 
 ## Getting started
 
