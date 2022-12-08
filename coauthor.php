@@ -14,8 +14,14 @@
 
 function create_block_coauthor_init() {
 	$dir = __DIR__;
-	require_once __DIR__ . '/class.openai_rest_controller.php';
-	new OpenAI_REST_Controller();
+
+	// If this executes in WordPress.com context, we don't need those.
+	if ( ! class_exists( 'WPCOM_REST_API_V2_Endpoint_OpenAI' ) ) {
+		require_once __DIR__ . '/class.openai_rest_controller.php';
+		new OpenAI_REST_Controller();
+		require_once __DIR__ . '/class.settings.php';
+		new \Coauthor\Settings();
+	}
 
 	$script_asset_path = "$dir/build/index.asset.php";
 	if ( ! file_exists( $script_asset_path ) ) {

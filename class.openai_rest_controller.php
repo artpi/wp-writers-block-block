@@ -58,7 +58,11 @@ class OpenAI_REST_Controller extends WP_REST_Controller {
 	}
 
 	public function get_openai_token() {
-		return get_option( 'openai-token' );
+		$option = get_option( 'coauthor' );
+		if ( ! empty( $option['openai-token'] ) ) {
+			return $option['openai-token'];
+		}
+		return false;
 	}
 
 	/**
