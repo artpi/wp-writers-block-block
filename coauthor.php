@@ -16,8 +16,9 @@ function create_block_coauthor_init() {
 	$dir = __DIR__;
 
 	// If this executes in WordPress.com context, we don't need those.
-	if ( ! class_exists( 'WPCOM_REST_API_V2_Endpoint_OpenAI' ) ) {
-		require_once __DIR__ . '/class.openai_rest_controller.php';
+	// We don't even sync the settings file.
+	if ( ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) && file_exists( __DIR__ . '/class.settings.php' ) ) {
+		require_once __DIR__ . '/class.openai-rest-controller.php';
 		new OpenAI_REST_Controller();
 		require_once __DIR__ . '/class.settings.php';
 		new \Coauthor\Settings();
