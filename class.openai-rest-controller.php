@@ -101,13 +101,13 @@ class OpenAI_REST_Controller extends WP_REST_Controller {
 					'Authorization' => 'Bearer ' . $token,
 				),
 				'body'        => json_encode(
-					[
+					array(
 						'prompt'          => $parameters['prompt'],
 						'n'               => 4, // Generate 4 options each time,
 						'size'            => '512x512',
 						'response_format' => 'b64_json', // This will return image body inside JSON, so that we don't have to deal with CORS on images.
 						'user'            => strval( get_current_user_id() ), // This logs the user id on the OpenAI side so it's easier to detect abuse.
-					]
+					)
 				),
 				'method'      => 'POST',
 				'data_format' => 'body',
@@ -139,7 +139,7 @@ class OpenAI_REST_Controller extends WP_REST_Controller {
 
 		$cache = get_transient( $this->transient_name_for_completion() );
 		if ( $cache ) {
-			return array( 'prompts' => [ $cache ] );
+			return array( 'prompts' => array( $cache ) );
 		}
 
 		$api_call = wp_remote_post(
@@ -150,12 +150,12 @@ class OpenAI_REST_Controller extends WP_REST_Controller {
 					'Authorization' => 'Bearer ' . $token,
 				),
 				'body'        => json_encode(
-					[
+					array(
 						'model'      => 'text-davinci-003', // Most capable model of GPT3
 						'prompt'     => $content,
 						'max_tokens' => 110, // This is length of generated prompt. A token is about 4 chars. I took 110 from Lex.page.
 						'user'       => strval( get_current_user_id() ), // This logs the user id on the OpenAI side so it's easier to detect abuse.
-					]
+					)
 				),
 				'method'      => 'POST',
 				'timeout'     => 60,

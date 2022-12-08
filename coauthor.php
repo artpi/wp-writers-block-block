@@ -35,7 +35,7 @@ function create_block_coauthor_init() {
 	wp_register_script(
 		'create-block-coauthor-block-editor',
 		plugins_url( $index_js, __FILE__ ),
-		array_merge( $script_asset['dependencies'], [ 'wp-data', 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-block-editor' ] ), // This is hardcoded here because Jetpack does not play nice with ES6 dependencies for these.
+		array_merge( $script_asset['dependencies'], array( 'wp-data', 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-block-editor' ) ), // This is hardcoded here because Jetpack does not play nice with ES6 dependencies for these.
 		$script_asset['version']
 	);
 	wp_set_script_translations( 'create-block-coauthor-block-editor', 'coauthor' );
