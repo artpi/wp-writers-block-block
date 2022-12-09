@@ -60,7 +60,7 @@ function getSuggestionFromOpenAI(
 				const output = tokens.slice( 0, i ).join( ' ' );
 				setTimeout( () => setAttributes( { content: output } ), 50 * i );
 			}
-			setTimeout( () => setAttributes( { content: content } ), 50 * ( i + 1 ) );
+			setTimeout( () => setAttributes( { content: content } ), 50 * tokens.length );
 		} )
 		.catch( ( res ) => {
 			// We have not yet submitted a token.

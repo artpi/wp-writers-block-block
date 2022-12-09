@@ -52,7 +52,7 @@ class OpenAI_REST_Controller extends WP_REST_Controller {
 		error_log( 'Generating dalle images for prompt: ' . $prompt );
 	}
 
-	public function log_request_gpt_completion( $prompt, array $response ) {
+	public function log_request_gpt_completion( $prompt, $response ) {
 		// Nothing for now.
 		error_log( 'OpenAI Completion: ' . json_encode( $response ) );
 	}
