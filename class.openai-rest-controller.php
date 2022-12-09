@@ -78,9 +78,52 @@ class OpenAI_REST_Controller extends WP_REST_Controller {
 		return 'openai-image-' . md5( $prompt );
 	}
 
+	/**
+	 * Should we use Jetpack connection instead of calling API directly?
+	 * 
+	 * @return int;
+	 */
+	private function jetpack_connection_blog_id() {
+		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+			return false;
+		}
+
+		$option = get_option( 'coauthor' );
+		if (
+			empty( $option['use-jetpack'] ) ||
+			intval( $option['use-jetpack'] ) !== 1
+		) {
+			return false;
+		}
+
+		if (
+			class_exists( '\Automattic\Jetpack\Connection\Client' ) &&
+			class_exists( '\Jetpack_Options' )
+		) {
+			return false;
+		}
+
+		$blog_id  = Jetpack_Options::get_option( 'id' );
+		if ( ! $blog_id ) {
+			return false;
+		}
+
+		return $blog_id;
+	}
+
 	public function request_dalle_generation( WP_REST_Request $request ) {
 		//We are saving responses as transients, so that we don't spam the API.
 		$parameters = $request->get_params();
+
+		if ( $blog_id = $this->jetpack_connection_blog_id() ) {
+			$response = \Automattic\Jetpack\Connection\Client::wpcom_json_api_request_as_user(
+				"/sites/$blog_id/{$this->rest_base}/images/generations",
+				'wp/v2',
+				array( 'method' => 'POST' ),
+				$parameters
+			);
+			return json_decode( $response['body'] );
+		}
 
 		$token = $this->get_openai_token();
 
@@ -130,6 +173,17 @@ class OpenAI_REST_Controller extends WP_REST_Controller {
 
 	public function request_gpt_completion( WP_REST_Request $request ) {
 		$parameters = $request->get_params();
+
+		if ( $blog_id = $this->jetpack_connection_blog_id() ) {
+			$response = \Automattic\Jetpack\Connection\Client::wpcom_json_api_request_as_user(
+				"/sites/$blog_id/{$this->rest_base}/completions",
+				'wp/v2',
+				array( 'method' => 'POST' ),
+				$parameters
+			);
+			return json_decode( $response['body'] );
+		}
+
 		$content    = strip_tags( $parameters['content'] );
 		$token      = $this->get_openai_token();
 
