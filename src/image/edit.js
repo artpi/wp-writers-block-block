@@ -3,7 +3,7 @@ import '../editor.scss';
 import { useState, RawHTML, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { useBlockProps } from '@wordpress/block-editor';
-import { Button, Placeholder, TextareaControl, Flex, FlexBlock, FlexItem } from '@wordpress/components';
+import { Button, ButtonGroup, Placeholder, TextareaControl, Flex, FlexBlock, FlexItem } from '@wordpress/components';
 import { Spinner } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
 import { store as blockEditorStore } from '@wordpress/block-editor';
@@ -14,7 +14,7 @@ function getImagesFromOpenAI(
 	setAttributes,
 	setLoadingImages,
 	setResultImages,
-	setPromptedForToken
+	setErrorMessage
 ) {
 	setLoadingImages( true );
 	setAttributes( { requestedPrompt: prompt } ); // This will prevent double submitting.
@@ -28,6 +28,10 @@ function getImagesFromOpenAI(
 	} )
 		.then( ( res ) => {
 			setLoadingImages( false );
+			if ( res.error && res.error.message ) {
+				setErrorMessage( res.error.message );
+				return;
+			}
 			const images = res.data.map( image => {
 				return 'data:image/png;base64,' + image.b64_json;
 			} );
@@ -36,9 +40,8 @@ function getImagesFromOpenAI(
 		.catch( ( res ) => {
 			// We have not yet submitted a token.
 			if ( res.code === 'token_missing' ) {
-				setPromptedForToken( true );
+				setErrorMessage( 'Please visit settings and input valid OpenAI token' );
 				setLoadingImages( false );
-				setAttributes( { requestedPrompt: '' } ); // You get another chance.
 			}
 		} );
 }
@@ -57,7 +60,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 	const [ resultImages, setResultImages ] = useState( [] );
 	const [ prompt, setPrompt ] = useState( '' );
 	const { replaceBlock } = useDispatch( blockEditorStore );
-	const [ promptedForToken, setPromptedForToken ] = useState( false );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 
 	const { mediaUpload } = useSelect(
@@ -72,17 +75,37 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 		[]
 	);
 
+	const submit = () => getImagesFromOpenAI(
+		prompt,
+		setAttributes,
+		setLoadingImages,
+		setResultImages,
+		setErrorMessage
+	);
+
 	return (
 		<div { ...useBlockProps() }>
-			{ promptedForToken && (
+			{ errorMessage && (
 				<Placeholder
 					label={ "Coauthor Image" }
-					instructions = { "Please visit settings and input valid OpenAI token" }
+					notices={ [ <div>{ errorMessage }</div>] }
 				>
-					<Button isPrimary href='options-general.php?page=coauthor' target='_blank'>{ "Visit Coauthor Settings" }</Button>
+					<TextareaControl
+						label="What would you like to see?"
+						value={ prompt }
+						onChange={ setPrompt }
+					/>
+					<Flex direction='row'>
+						<FlexItem>
+							<Button isPrimary onClick={ submit }>{ "Retry" }</Button>
+						</FlexItem>
+						<FlexItem>
+							<Button href='options-general.php?page=coauthor' target='_blank'>{ "Visit Coauthor Settings" }</Button>
+						</FlexItem>
+					</Flex>
 				</Placeholder>
 			) }
-			{ ! promptedForToken && ! attributes.requestedPrompt && (
+			{ ! errorMessage && ! attributes.requestedPrompt && (
 				<Placeholder
 					label={ "Coauthor Image" }
 				>
@@ -91,13 +114,8 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 						label="What would you like to see?"
 						onChange={ setPrompt }
 					/>
-					<Button isPrimary onClick={ () => getImagesFromOpenAI(
-						prompt,
-						setAttributes,
-						setLoadingImages,
-						setResultImages,
-						setPromptedForToken
-					) }>
+					<Button isPrimary
+					onClick={ submit }>
 						{ 'Submit' }
 					</Button>
 				</div>
@@ -108,7 +126,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					label={ "Coauthor Image" }
 				>
 				<div>
-					<div style={ {textAlign: 'center', margin: '12px', fontStyle: 'italic'} }>{ attributes.requestedPrompt }</div>
+					<div style={ { textAlign: 'center', margin: '12px', fontStyle: 'italic'} }>{ attributes.requestedPrompt }</div>
 					<div style={ { fontSize: '20px', lineHeight: '38px'} }>{ "Please choose your image" }</div>
 					<Flex direction='row' justify={ 'space-between' } >
 					{ resultImages.map( image => (
