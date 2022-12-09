@@ -35,11 +35,13 @@ function getSuggestionFromOpenAI(
 	setLoadingCompletion,
 	setNeedMore
 ) {
-	if( formattedPrompt.length < 480 ) {
+	if( formattedPrompt.length < 120 ) {
 		setNeedMore( true );
 		return;
 	}
 	setNeedMore( false );
+	// We only take the last 240 chars into account, otherwise the prompt gets too long and because we have a 110 tokens limit, there is no place for response.
+	formattedPrompt = formattedPrompt.slice( - 240 ); 
 	const data = { content: formattedPrompt };
 	setLoadingCompletion( true );
 	setAttributes( { requestedPrompt:true } ); // This will prevent double submitting.
@@ -58,6 +60,7 @@ function getSuggestionFromOpenAI(
 				const output = tokens.slice( 0, i ).join( ' ' );
 				setTimeout( () => setAttributes( { content: output } ), 50 * i );
 			}
+			setTimeout( () => setAttributes( { content: content } ), 50 * ( i + 1 ) );
 		} )
 		.catch( ( res ) => {
 			// We have not yet submitted a token.
