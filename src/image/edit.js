@@ -1,9 +1,9 @@
 import '../editor.scss';
 
-import { useState, RawHTML, useEffect } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { useBlockProps } from '@wordpress/block-editor';
-import { Button, ButtonGroup, Placeholder, TextareaControl, Flex, FlexBlock, FlexItem } from '@wordpress/components';
+import { Button, Placeholder, TextareaControl, Flex, FlexBlock, FlexItem } from '@wordpress/components';
 import { Spinner } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
 import { store as blockEditorStore } from '@wordpress/block-editor';
@@ -85,7 +85,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
 	return (
 		<div { ...useBlockProps() }>
-			{ errorMessage && (
+			{ ! loadingImages && errorMessage && (
 				<Placeholder
 					label={ "Coauthor Image" }
 					notices={ [ <div>{ errorMessage }</div>] }
@@ -97,11 +97,16 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					/>
 					<Flex direction='row'>
 						<FlexItem>
-							<Button isPrimary onClick={ submit }>{ "Retry" }</Button>
+							<Button isPrimary onClick={ () => {
+								setErrorMessage( '' );
+								submit();
+							} }>{ "Retry" }</Button>
 						</FlexItem>
-						<FlexItem>
-							<Button href='options-general.php?page=coauthor' target='_blank'>{ "Visit Coauthor Settings" }</Button>
-						</FlexItem>
+						{ errorMessage === 'Please visit settings and input valid OpenAI token' && (
+							<FlexItem>
+								<Button href='options-general.php?page=coauthor' target='_blank'>{ "Visit Coauthor Settings" }</Button>
+							</FlexItem>
+						) }
 					</Flex>
 				</Placeholder>
 			) }
@@ -121,7 +126,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 				</div>
 				</Placeholder>
 			) }
-			{  ! loadingImages && resultImages.length > 0 && (
+			{  ! errorMessage && ! loadingImages && resultImages.length > 0 && (
 				<Placeholder
 					label={ "Coauthor Image" }
 				>
@@ -176,7 +181,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 				</div>
 				</Placeholder>
 			) }
-			{ attributes.content && ! loadingImages && (
+			{ ! errorMessage && attributes.content && ! loadingImages && (
 				<Placeholder
 					label={ "Coauthor Image" }
 				>
@@ -187,7 +192,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 				</div>
 				</Placeholder>
 			) }
-			{ loadingImages && (
+			{ ! errorMessage && loadingImages && (
 				<Placeholder
 					label={ "Coauthor Image" }
 				>
