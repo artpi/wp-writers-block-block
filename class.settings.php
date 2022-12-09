@@ -54,10 +54,29 @@ class Settings {
 			'openai-token', // id
 			'OpenAI Token', // title
 			function() {
-				$this->generate_field( 'openai-token', 'sk-...', __( 'Get the token from the OpenAI dashboad' ) );
+				$this->generate_field( 'text', 'openai-token', 'sk-...', __( 'Get the token from the OpenAI dashboad' ) );
 			},
 			'settings-admin', // page
 			'settings-section' // section
+		);
+
+		add_settings_section(
+			'experimental', // id
+			'Experimental Settings', // title
+			function() {
+				_e( 'Do not touch these unless you know what you are doing' );
+			},
+			'settings-admin' // page
+		);
+
+		add_settings_field(
+			'use-jetpack', // id
+			'BETA: Use Jetpack', // title
+			function() {
+				$this->generate_field( 'checkbox', 'use-jetpack', __( 'Use Jetpack Connection instead of OpenAI token' ) );
+			},
+			'settings-admin', // page
+			'experimental' // section
 		);
 		register_setting(
 			$this->option_group, // option_group
@@ -67,19 +86,35 @@ class Settings {
 				if ( isset( $input['openai-token'] ) ) {
 					$sanitary_values['openai-token'] = sanitize_text_field( $input['openai-token'] );
 				}
+				
+				if( isset( $input['use-jetpack'] ) && $input['use-jetpack'] === 'use-jetpack' ) {
+					$sanitary_values['use-jetpack'] = 1;
+				} else {
+					$sanitary_values['use-jetpack'] = 0;
+				}
 				return $sanitary_values;
 			}
 		);
 
 	}
-	private function generate_field( $id, $placeholder = '', $label = '' ) {
-		printf(
-			'<input class="large-text" type="text" name="%5$s[%1$s]" id="%1$s" value="%2$s" placeholder="%3$s"><br/><label for="%1$s">%4$s</label>',
-			$id,
-			isset( $this->settings_options[ $id ] ) ? esc_attr( $this->settings_options[ $id ] ) : '',
-			$placeholder,
-			$label,
-			$this->option_group
-		);
+	private function generate_field( $type, $id, $placeholder = '', $label = '' ) {
+		if( $type === 'text' ) {
+			printf(
+				'<input class="large-text" type="text" name="%5$s[%1$s]" id="%1$s" value="%2$s" placeholder="%3$s"><br/><label for="%1$s">%4$s</label>',
+				$id,
+				isset( $this->settings_options[ $id ] ) ? esc_attr( $this->settings_options[ $id ] ) : '',
+				$placeholder,
+				$label,
+				$this->option_group
+			);
+		} else if ( $type === 'checkbox' ) {
+			printf(
+				'<input type="checkbox" name="%4$s[%1$s]" id="%1$s" value="%1$s" %2$s><label for="%1$s">%3$s</label>',
+				$id,
+				( isset( $this->settings_options[ $id ] ) && $this->settings_options[ $id ] ) ? 'checked' : '',
+				$label,
+				$this->option_group
+			);
+		}
 	}
 }
